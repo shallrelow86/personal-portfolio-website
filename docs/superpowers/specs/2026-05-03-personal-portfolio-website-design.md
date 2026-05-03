@@ -76,6 +76,7 @@ Blog articles. Uses Sanity's native draft/published workflow — no custom statu
 | body | rich text | Article content (code blocks, images, headings supported) |
 | excerpt | text | Summary for listing pages |
 | tags | array of strings | Category tags |
+| publishedAt | datetime | Publication date (for sorting and display) |
 
 ### 5. Comment (multiple documents)
 User-submitted comments on blog posts. Queried by post reference — no comments array stored on Post.
