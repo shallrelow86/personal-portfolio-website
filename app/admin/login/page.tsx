@@ -35,9 +35,12 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h1 className="text-xl font-semibold text-center mb-6">Admin Login</h1>
+    <div className="flex items-center justify-center min-h-screen bg-surface">
+      <form onSubmit={handleSubmit} className="bg-surface-alt border border-border p-8 rounded-lg shadow-lg w-full max-w-sm">
+        <h1 className="text-xl font-semibold text-center mb-6 font-mono text-foreground">
+          <span className="text-primary mr-1">&gt;</span>
+          Admin Login
+        </h1>
 
         <input
           type="password"
@@ -46,17 +49,17 @@ export default function AdminLoginPage() {
           placeholder="Password"
           required
           autoFocus
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-4"
+          className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors mb-4"
         />
 
         {error && (
-          <p className="text-red-500 text-sm mb-4">{error}</p>
+          <p className="text-error text-sm mb-4">{error}</p>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 disabled:opacity-50"
+          className="w-full py-2 bg-primary text-surface rounded-lg text-sm font-medium hover:bg-primary-hover disabled:opacity-50 transition-colors"
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>

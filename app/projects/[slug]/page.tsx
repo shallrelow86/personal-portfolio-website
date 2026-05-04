@@ -26,54 +26,78 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   if (!project) notFound();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="max-w-4xl mx-auto px-4 py-12 animate-fade-in-up">
       {project.coverImage && (
-        <img
-          src={urlForImage(project.coverImage).width(1200).height(400).url()}
-          alt={project.title}
-          className="w-full h-64 object-cover rounded-lg mb-8"
-        />
+        <div className="relative rounded-lg overflow-hidden mb-8">
+          <img
+            src={urlForImage(project.coverImage).width(1200).height(400).url()}
+            alt={project.title}
+            className="w-full h-64 object-cover"
+          />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-surface to-transparent" />
+        </div>
       )}
 
-      <h1 className="text-3xl font-bold mb-4">{project.title}</h1>
+      <h1 className="text-3xl font-bold mb-4 font-mono">
+        <span className="text-primary mr-2">&gt;</span>
+        {project.title}
+      </h1>
 
       {project.techStack && project.techStack.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
           {project.techStack.map((tech: string) => (
-            <span key={tech} className="text-sm bg-gray-100 px-3 py-1 rounded-full">{tech}</span>
+            <span
+              key={tech}
+              className="text-sm bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full"
+            >
+              {tech}
+            </span>
           ))}
         </div>
       )}
 
       <div className="flex gap-4 mb-8">
         {project.githubUrl && (
-          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm bg-surface-alt border border-border px-4 py-2 rounded-lg hover:border-primary/50 hover:text-primary transition-all"
+          >
             GitHub &rarr;
           </a>
         )}
         {project.liveUrl && (
-          <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm bg-surface-alt border border-border px-4 py-2 rounded-lg hover:border-primary/50 hover:text-primary transition-all"
+          >
             Live Demo &rarr;
           </a>
         )}
       </div>
 
       {project.body && (
-        <div className="prose max-w-none mb-12">
+        <article className="prose max-w-none mb-12 text-muted [&_h2]:text-foreground [&_h3]:text-foreground [&_strong]:text-foreground [&_a]:text-primary [&_code]:bg-surface-alt [&_code]:text-primary [&_pre]:bg-surface-alt [&_pre]:border [&_pre]:border-border">
           <PortableText value={project.body} />
-        </div>
+        </article>
       )}
 
       {project.screenshots && project.screenshots.length > 0 && (
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Screenshots</h2>
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-6 font-mono">
+            <span className="text-primary mr-2">&gt;</span>
+            Screenshots
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {project.screenshots.map((img: any, i: number) => (
               <img
                 key={i}
                 src={urlForImage(img).width(800).url()}
                 alt={`${project.title} screenshot ${i + 1}`}
-                className="rounded-lg border"
+                className="rounded-lg border border-border"
               />
             ))}
           </div>
@@ -81,9 +105,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       )}
 
       {project.gitRepoData && (
-        <section className="mt-12 p-4 bg-gray-50 rounded-lg">
-          <h3 className="font-semibold mb-2">Repository Stats</h3>
-          <div className="flex gap-6 text-sm text-gray-600">
+        <section className="p-5 bg-surface-alt border border-border rounded-lg">
+          <h3 className="font-semibold mb-3 font-mono text-sm text-muted">Repository Stats</h3>
+          <div className="flex gap-6 text-sm text-muted">
             {project.gitRepoData.stars != null && <span>⭐ {project.gitRepoData.stars} stars</span>}
             {project.gitRepoData.forks != null && <span>🍴 {project.gitRepoData.forks} forks</span>}
             {project.gitRepoData.language && <span>🔤 {project.gitRepoData.language}</span>}

@@ -17,7 +17,7 @@ export default function PostCard({ post }: PostCardProps) {
   return (
     <Link
       href={`/blog/${post.slug.current}`}
-      className="block border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+      className="group block border border-border rounded-lg overflow-hidden bg-surface-alt hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300"
     >
       {post.coverImage && (
         <img
@@ -28,13 +28,15 @@ export default function PostCard({ post }: PostCardProps) {
       )}
       <div className="p-4">
         {post.publishedAt && (
-          <time className="text-xs text-gray-400">
+          <time className="text-xs text-muted">
             {new Date(post.publishedAt).toLocaleDateString('zh-CN')}
           </time>
         )}
-        <h3 className="font-semibold text-lg mb-1">{post.title}</h3>
+        <h3 className="font-semibold text-lg mt-1 mb-1 text-foreground group-hover:text-primary transition-colors">
+          {post.title}
+        </h3>
         {post.excerpt && (
-          <p className="text-sm text-gray-600 line-clamp-2">{post.excerpt}</p>
+          <p className="text-sm text-muted line-clamp-2">{post.excerpt}</p>
         )}
       </div>
     </Link>

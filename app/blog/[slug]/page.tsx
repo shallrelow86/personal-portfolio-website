@@ -32,38 +32,49 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     .catch(() => []);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
+    <div className="max-w-3xl mx-auto px-4 py-12 animate-fade-in-up">
       {post.coverImage && (
-        <img
-          src={urlForImage(post.coverImage).width(1200).height(400).url()}
-          alt={post.title}
-          className="w-full h-64 object-cover rounded-lg mb-8"
-        />
+        <div className="relative rounded-lg overflow-hidden mb-8">
+          <img
+            src={urlForImage(post.coverImage).width(1200).height(400).url()}
+            alt={post.title}
+            className="w-full h-64 object-cover"
+          />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-surface to-transparent" />
+        </div>
       )}
 
-      <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+      <h1 className="text-3xl font-bold mb-4 font-mono">
+        <span className="text-accent mr-2">&gt;</span>
+        {post.title}
+      </h1>
 
-      <div className="flex items-center gap-4 text-sm text-gray-500 mb-8">
+      <div className="flex items-center gap-4 text-sm text-muted mb-8">
         {post.publishedAt && (
           <time>{new Date(post.publishedAt).toLocaleDateString('zh-CN')}</time>
         )}
         {post.tags?.length > 0 && (
           <div className="flex gap-1">
             {post.tags.map((tag: string) => (
-              <span key={tag} className="bg-gray-100 px-2 py-0.5 rounded text-xs">{tag}</span>
+              <span key={tag} className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded text-xs">
+                {tag}
+              </span>
             ))}
           </div>
         )}
       </div>
 
       {post.body && (
-        <article className="prose max-w-none mb-12">
+        <article className="prose max-w-none mb-12 text-muted [&_h2]:text-foreground [&_h3]:text-foreground [&_strong]:text-foreground [&_a]:text-primary [&_code]:bg-surface-alt [&_code]:text-primary [&_pre]:bg-surface-alt [&_pre]:border [&_pre]:border-border [&_blockquote]:border-primary/30 [&_blockquote]:text-muted">
           <PortableText value={post.body} />
         </article>
       )}
 
       <section>
-        <h2 className="text-xl font-bold mb-4">评论</h2>
+        <h2 className="text-xl font-bold mb-4 font-mono">
+          <span className="text-primary mr-2">&gt;</span>
+          评论
+        </h2>
         <CommentList comments={comments} />
         <CommentForm postId={post._id} />
       </section>

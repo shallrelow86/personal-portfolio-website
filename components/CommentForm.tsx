@@ -48,12 +48,17 @@ export default function CommentForm({ postId }: CommentFormProps) {
   };
 
   if (status === 'success') {
-    return <p className="text-green-600 text-sm py-4">评论已提交，等待审核。谢谢！</p>;
+    return <p className="text-success text-sm py-4">评论已提交，等待审核。谢谢！</p>;
   }
 
+  const inputClass = 'w-full bg-surface-alt border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors';
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 py-6 border-t">
-      <h3 className="font-semibold text-lg">发表评论</h3>
+    <form onSubmit={handleSubmit} className="space-y-4 py-6 border-t border-border">
+      <h3 className="font-semibold text-lg font-mono">
+        <span className="text-primary mr-1">&gt;</span>
+        发表评论
+      </h3>
       <div>
         <input
           type="text"
@@ -62,7 +67,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
           onChange={(e) => setName(e.target.value)}
           required
           maxLength={60}
-          className="w-full border rounded px-3 py-2 text-sm"
+          className={inputClass}
         />
       </div>
       <div>
@@ -72,7 +77,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full border rounded px-3 py-2 text-sm"
+          className={inputClass}
         />
       </div>
       <div>
@@ -83,18 +88,18 @@ export default function CommentForm({ postId }: CommentFormProps) {
           required
           maxLength={2000}
           rows={4}
-          className="w-full border rounded px-3 py-2 text-sm"
+          className={inputClass}
         />
       </div>
       <Turnstile
         sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
         onVerify={(token) => { turnstileRef.current = token; }}
       />
-      {status === 'error' && <p className="text-red-500 text-sm">{errorMsg}</p>}
+      {status === 'error' && <p className="text-error text-sm">{errorMsg}</p>}
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+        className="bg-primary text-surface font-medium px-5 py-2 rounded-lg text-sm hover:bg-primary-hover disabled:opacity-50 transition-colors"
       >
         {status === 'submitting' ? '提交中...' : '提交'}
       </button>

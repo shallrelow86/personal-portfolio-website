@@ -12,56 +12,81 @@ export default async function AboutPage() {
 
   if (!profile) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-12">
-        <p className="text-gray-500">No profile information configured yet.</p>
+      <div className="max-w-3xl mx-auto px-4 py-20 text-center">
+        <p className="font-mono text-muted">
+          <span className="text-primary">$</span> echo &quot;No profile configured yet. Visit /admin&quot;
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
-      <div className="flex items-center gap-6 mb-8">
+    <div className="max-w-3xl mx-auto px-4 py-12 animate-fade-in-up">
+      <div className="flex items-center gap-6 mb-10">
         {profile.avatar && (
           <img
             src={urlForImage(profile.avatar).width(200).height(200).url()}
             alt={profile.name}
-            className="w-24 h-24 rounded-full object-cover"
+            className="w-24 h-24 rounded-full object-cover ring-2 ring-primary/50 ring-offset-4 ring-offset-surface"
           />
         )}
         <div>
-          <h1 className="text-3xl font-bold">{profile.name}</h1>
-          {profile.title && <p className="text-xl text-gray-600">{profile.title}</p>}
+          <h1 className="text-3xl font-bold font-mono">
+            <span className="text-muted">$</span>{' '}
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              {profile.name}
+            </span>
+          </h1>
+          {profile.title && (
+            <p className="text-muted text-lg mt-1">
+              <span className="text-border mr-1">&gt;</span>
+              {profile.title}
+            </p>
+          )}
         </div>
       </div>
 
       {profile.bio && (
-        <div className="prose max-w-none mb-8">
-          <PortableText value={profile.bio} />
+        <div className="mb-10 border-l-2 border-primary/30 pl-4">
+          <div className="prose max-w-none text-muted [&_strong]:text-foreground [&_a]:text-primary">
+            <PortableText value={profile.bio} />
+          </div>
         </div>
       )}
 
       {profile.skills?.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Skills</h2>
+        <section className="mb-10">
+          <h2 className="text-xl font-bold mb-4 font-mono">
+            <span className="text-primary mr-2">&gt;</span>
+            Skills
+          </h2>
           <div className="flex flex-wrap gap-2">
             {profile.skills.map((skill: string) => (
-              <span key={skill} className="bg-gray-100 px-3 py-1 rounded-full text-sm">{skill}</span>
+              <span
+                key={skill}
+                className="bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-sm"
+              >
+                {skill}
+              </span>
             ))}
           </div>
         </section>
       )}
 
       {profile.socialLinks?.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Connect</h2>
-          <div className="flex gap-4">
+        <section className="mb-10">
+          <h2 className="text-xl font-bold mb-4 font-mono">
+            <span className="text-accent mr-2">&gt;</span>
+            Connect
+          </h2>
+          <div className="flex flex-wrap gap-3">
             {profile.socialLinks.map((link: { platform: string; url: string }) => (
               <a
                 key={link.platform}
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
+                className="text-sm text-muted bg-surface-alt border border-border px-4 py-2 rounded-lg hover:text-primary hover:border-primary/50 transition-all duration-200"
               >
                 {link.platform}
               </a>
@@ -75,7 +100,7 @@ export default async function AboutPage() {
           <a
             href={urlForFile(profile.resumeFile)}
             download
-            className="inline-block bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700"
+            className="inline-block bg-primary text-surface font-medium px-5 py-2.5 rounded-lg text-sm hover:bg-primary-hover transition-colors"
           >
             Download Resume (PDF)
           </a>
