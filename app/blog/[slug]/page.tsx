@@ -11,8 +11,9 @@ export async function generateStaticParams() {
   return slugs.map((slug: string) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = await client.fetch(POST_BY_SLUG_QUERY, { slug: params.slug }).catch(() => null);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await client.fetch(POST_BY_SLUG_QUERY, { slug }).catch(() => null);
   if (!post) return { title: 'Not Found' };
   return {
     title: post.title,
@@ -20,8 +21,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await client.fetch(POST_BY_SLUG_QUERY, { slug: params.slug }).catch(() => null);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await client.fetch(POST_BY_SLUG_QUERY, { slug }).catch(() => null);
 
   if (!post) notFound();
 

@@ -9,8 +9,9 @@ export async function generateStaticParams() {
   return slugs.map((slug: string) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const project = await client.fetch(PROJECT_BY_SLUG_QUERY, { slug: params.slug }).catch(() => null);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await client.fetch(PROJECT_BY_SLUG_QUERY, { slug }).catch(() => null);
   if (!project) return { title: 'Not Found' };
   return {
     title: project.title,
@@ -18,8 +19,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
-  const project = await client.fetch(PROJECT_BY_SLUG_QUERY, { slug: params.slug }).catch(() => null);
+export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const project = await client.fetch(PROJECT_BY_SLUG_QUERY, { slug }).catch(() => null);
 
   if (!project) notFound();
 

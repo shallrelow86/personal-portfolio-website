@@ -16,10 +16,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Server not configured.' }, { status: 500 });
     }
 
-    // Secure comparison using timingSafeEqual (Node.js crypto)
+    // Secure comparison — compare hashes to avoid timingSafeEqual length error
+    const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
+    const expectedHash = crypto.createHash('sha256').update(expected).digest('hex');
     const valid = crypto.timingSafeEqual(
-      Buffer.from(password),
-      Buffer.from(expected)
+      Buffer.from(passwordHash),
+      Buffer.from(expectedHash)
     );
 
     if (!valid) {
