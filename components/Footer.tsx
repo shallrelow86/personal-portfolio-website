@@ -15,11 +15,9 @@ export default async function Footer() {
 
   return (
     <footer className="border-t border-border mt-auto">
-      <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between text-xs font-mono text-muted">
+      <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between text-sm text-muted">
         <span>{footerText || `© ${new Date().getFullYear()}`}</span>
-        <span>
-          <span className="text-border">built</span> with <span className="text-primary">[ code ]</span>
-        </span>
+        <span>Built with Next.js & Sanity</span>
       </div>
     </footer>
   );

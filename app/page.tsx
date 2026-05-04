@@ -12,42 +12,39 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="animate-slide-up">
+    <div className="animate-in">
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-6 pt-32 pb-24">
-        <div className="flex items-start justify-between">
-          <div className="max-w-2xl">
-            <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-8">
-              Developer &amp; Builder
-            </p>
-            <h1 className="font-mono text-5xl md:text-7xl font-bold tracking-tight text-foreground mb-6">
+      <section className="max-w-5xl mx-auto px-6 pt-24 pb-16 md:pt-36 md:pb-24">
+        <div className="flex flex-col-reverse md:flex-row md:items-center gap-8 md:gap-16">
+          <div className="flex-1">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
               {profile?.name || 'Developer'}
             </h1>
             {profile?.title && (
-              <p className="font-mono text-xl text-muted mb-10 leading-relaxed">
+              <p className="text-lg text-muted mb-8 leading-relaxed max-w-lg">
                 {profile.title}
               </p>
             )}
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-2">
               {(profile?.socialLinks || []).map((link: { platform: string; url: string }) => (
                 <a
                   key={link.platform}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-mono text-xs text-muted hover:text-primary transition-colors tracking-wide uppercase"
+                  className="text-sm px-4 py-2 bg-surface-alt border border-border rounded-lg text-muted hover:text-foreground hover:border-primary/30 transition-all"
                 >
-                  [{link.platform}]
+                  {link.platform}
                 </a>
               ))}
             </div>
           </div>
           {profile?.avatar && (
-            <div className="hidden md:block">
+            <div className="flex-shrink-0">
               <img
-                src={urlForImage(profile.avatar).width(160).height(160).url()}
+                src={urlForImage(profile.avatar).width(200).height(200).url()}
                 alt={profile.name}
-                className="w-32 h-32 object-cover grayscale"
+                className="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover ring-1 ring-border"
               />
             </div>
           )}
@@ -56,26 +53,16 @@ export default async function HomePage() {
 
       {/* Featured Projects */}
       {projects.length > 0 && (
-        <section className="max-w-6xl mx-auto px-6 py-16">
-          <div className="flex items-baseline justify-between mb-10">
-            <div className="flex items-baseline gap-4">
-              <span className="font-mono text-xs text-muted">01</span>
-              <h2 className="font-mono text-2xl font-bold text-foreground">
-                Featured Projects
-              </h2>
-            </div>
-            <Link
-              href="/projects"
-              className="font-mono text-xs text-muted hover:text-primary transition-colors tracking-wide uppercase"
-            >
-              View all &rarr;
+        <section className="max-w-5xl mx-auto px-6 pb-16">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold">精选项目</h2>
+            <Link href="/projects" className="text-sm text-muted hover:text-primary transition-colors">
+              查看全部 &rarr;
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {projects.map((project: any) => (
-              <div key={project._id} className="bg-surface">
-                <ProjectCard project={project} />
-              </div>
+              <ProjectCard key={project._id} project={project} />
             ))}
           </div>
         </section>
@@ -83,35 +70,25 @@ export default async function HomePage() {
 
       {/* Latest Posts */}
       {posts.length > 0 && (
-        <section className="max-w-6xl mx-auto px-6 py-16">
-          <div className="flex items-baseline justify-between mb-10">
-            <div className="flex items-baseline gap-4">
-              <span className="font-mono text-xs text-muted">02</span>
-              <h2 className="font-mono text-2xl font-bold text-foreground">
-                Latest Posts
-              </h2>
-            </div>
-            <Link
-              href="/blog"
-              className="font-mono text-xs text-muted hover:text-primary transition-colors tracking-wide uppercase"
-            >
-              View all &rarr;
+        <section className="max-w-5xl mx-auto px-6 pb-24">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold">最新文章</h2>
+            <Link href="/blog" className="text-sm text-muted hover:text-primary transition-colors">
+              查看全部 &rarr;
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {posts.map((post: any) => (
-              <div key={post._id} className="bg-surface">
-                <PostCard post={post} />
-              </div>
+              <PostCard key={post._id} post={post} />
             ))}
           </div>
         </section>
       )}
 
       {projects.length === 0 && posts.length === 0 && (
-        <section className="max-w-6xl mx-auto px-6 py-24 text-center">
-          <p className="font-mono text-muted">
-            content pending <span className="text-border">—</span> visit <span className="text-primary">/admin</span> to begin
+        <section className="max-w-5xl mx-auto px-6 pb-24 text-center">
+          <p className="text-muted">
+            还没有内容，前往 <Link href="/admin" className="text-primary hover:underline">/admin</Link> 添加
           </p>
         </section>
       )}

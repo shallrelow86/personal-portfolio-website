@@ -49,61 +49,45 @@ export default function CommentForm({ postId }: CommentFormProps) {
 
   if (status === 'success') {
     return (
-      <p className="font-mono text-sm text-success py-6 border-t border-border mt-8">
+      <p className="text-success text-sm py-6 border-t border-border mt-8">
         评论已提交，等待审核。谢谢！
       </p>
     );
   }
 
   const inputClass =
-    'w-full bg-surface border border-border px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary transition-colors';
+    'w-full bg-surface border border-border rounded-lg px-4 py-2.5 text-sm placeholder:text-muted focus:outline-none focus:border-primary transition-colors';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 py-8 border-t border-border mt-8">
-      <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-4">
-        Leave a comment
-      </p>
+      <h3 className="font-semibold mb-2">发表评论</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          maxLength={60}
+          type="text" placeholder="你的名字" value={name}
+          onChange={(e) => setName(e.target.value)} required maxLength={60}
           className={inputClass}
         />
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          type="email" placeholder="你的邮箱（不会公开）" value={email}
+          onChange={(e) => setEmail(e.target.value)} required
           className={inputClass}
         />
       </div>
       <textarea
-        placeholder="Your comment..."
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        required
-        maxLength={2000}
-        rows={4}
+        placeholder="你的评论" value={body}
+        onChange={(e) => setBody(e.target.value)} required maxLength={2000} rows={4}
         className={inputClass}
       />
       <Turnstile
         sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
         onVerify={(token) => { turnstileRef.current = token; }}
       />
-      {status === 'error' && (
-        <p className="font-mono text-sm text-error">{errorMsg}</p>
-      )}
+      {status === 'error' && <p className="text-error text-sm">{errorMsg}</p>}
       <button
-        type="submit"
-        disabled={status === 'submitting'}
-        className="font-mono text-sm border border-border px-6 py-3 text-muted hover:text-primary hover:border-primary transition-colors disabled:opacity-40"
+        type="submit" disabled={status === 'submitting'}
+        className="bg-primary text-surface font-medium px-5 py-2.5 rounded-lg text-sm hover:bg-primary-hover transition-colors disabled:opacity-50"
       >
-        {status === 'submitting' ? 'Submitting...' : 'Submit'}
+        {status === 'submitting' ? '提交中...' : '提交评论'}
       </button>
     </form>
   );

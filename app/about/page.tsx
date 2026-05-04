@@ -12,75 +12,59 @@ export default async function AboutPage() {
 
   if (!profile) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <p className="font-mono text-muted">
-          profile not found <span className="text-border">—</span> configure in <span className="text-primary">/admin</span>
-        </p>
+      <div className="max-w-3xl mx-auto px-6 py-24 text-center text-muted">
+        暂无个人信息，请在 /admin 中配置
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16 animate-slide-up">
-      <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-16">
+    <div className="max-w-5xl mx-auto px-6 py-16 animate-in">
+      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-12">
         {/* Sidebar */}
-        <aside className="space-y-8">
+        <aside>
           {profile.avatar && (
             <img
-              src={urlForImage(profile.avatar).width(280).height(280).url()}
+              src={urlForImage(profile.avatar).width(240).height(240).url()}
               alt={profile.name}
-              className="w-full aspect-square object-cover grayscale border border-border"
+              className="w-full aspect-square object-cover rounded-2xl ring-1 ring-border mb-6"
             />
           )}
-          <div>
-            <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-4">
-              Connect
-            </p>
-            <div className="space-y-2">
+          <div className="space-y-4">
+            {profile.resumeFile?.asset && (
+              <a
+                href={urlForFile(profile.resumeFile)}
+                download
+                className="block text-sm text-center bg-primary text-surface font-medium py-2.5 rounded-lg hover:bg-primary-hover transition-colors"
+              >
+                下载简历
+              </a>
+            )}
+            <div className="space-y-1">
               {(profile.socialLinks || []).map((link: { platform: string; url: string }) => (
                 <a
                   key={link.platform}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block font-mono text-sm text-muted hover:text-primary transition-colors"
+                  className="block text-sm text-muted hover:text-primary transition-colors py-1"
                 >
                   {link.platform} &rarr;
                 </a>
               ))}
             </div>
           </div>
-          {profile.resumeFile?.asset && (
-            <a
-              href={urlForFile(profile.resumeFile)}
-              download
-              className="inline-block font-mono text-sm border border-border px-4 py-2 text-muted hover:text-primary hover:border-primary transition-colors"
-            >
-              Download Resume
-            </a>
-          )}
         </aside>
 
-        {/* Main content */}
+        {/* Main */}
         <div>
-          <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-6">
-            About
-          </p>
-          <h1 className="font-mono text-4xl md:text-5xl font-bold text-foreground mb-2">
-            {profile.name}
-          </h1>
-          {profile.title && (
-            <p className="font-mono text-lg text-muted mb-10">
-              {profile.title}
-            </p>
-          )}
+          <h1 className="text-3xl font-bold mb-2">{profile.name}</h1>
+          {profile.title && <p className="text-muted mb-8">{profile.title}</p>}
 
           {profile.bio && (
-            <div className="prose prose-invert max-w-none mb-12 text-muted leading-relaxed
-              [&_strong]:text-foreground [&_strong]:font-bold
-              [&_a]:font-mono [&_a]:text-primary [&_a]:no-underline hover:[&_a]:underline
-              [&_p]:mb-5
-              [&_blockquote]:border-l-2 [&_blockquote]:border-primary/30 [&_blockquote]:pl-4 [&_blockquote]:text-muted
+            <div className="prose prose-invert max-w-none mb-10 text-muted leading-relaxed
+              [&_strong]:text-foreground
+              [&_a]:text-primary
             ">
               <PortableText value={profile.bio} />
             </div>
@@ -88,12 +72,10 @@ export default async function AboutPage() {
 
           {profile.skills?.length > 0 && (
             <section>
-              <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-5">
-                Skills &amp; Technologies
-              </p>
-              <div className="flex flex-wrap gap-x-6 gap-y-2">
+              <h2 className="text-lg font-semibold mb-4">技能</h2>
+              <div className="flex flex-wrap gap-2">
                 {profile.skills.map((skill: string) => (
-                  <span key={skill} className="font-mono text-sm text-foreground">
+                  <span key={skill} className="text-sm bg-surface-alt border border-border px-3 py-1.5 rounded-lg">
                     {skill}
                   </span>
                 ))}

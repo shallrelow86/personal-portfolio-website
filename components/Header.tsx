@@ -15,24 +15,24 @@ export default async function Header() {
   const nav = await getNav();
 
   return (
-    <header className="border-b border-border sticky top-0 z-50 bg-surface/90 backdrop-blur-sm">
-      <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="font-mono text-lg font-bold tracking-tight text-foreground hover:text-primary transition-colors">
-          <span className="text-primary">~</span>/portfolio
+    <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-border">
+      <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+        <Link href="/" className="font-semibold text-lg tracking-tight hover:text-primary transition-colors">
+          {nav.length > 0 ? nav[0]?.label?.split('/')[0] : 'Portfolio'}
+          <span className="text-primary">.</span>
         </Link>
-        <ul className="flex gap-8 text-sm font-mono">
+        <nav className="flex gap-1">
           {nav.map((item: { label: string; url: string }) => (
-            <li key={item.url}>
-              <Link
-                href={item.url}
-                className="text-muted hover:text-primary transition-colors tracking-wide uppercase text-xs"
-              >
-                {item.label}
-              </Link>
-            </li>
+            <Link
+              key={item.url}
+              href={item.url}
+              className="px-3 py-2 text-sm text-muted hover:text-foreground transition-colors rounded-md hover:bg-surface-alt"
+            >
+              {item.label}
+            </Link>
           ))}
-        </ul>
-      </nav>
+        </nav>
+      </div>
     </header>
   );
 }
