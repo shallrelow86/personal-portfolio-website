@@ -18,30 +18,28 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Link
       href={`/projects/${project.slug.current}`}
-      className="group block border border-border rounded-lg overflow-hidden bg-surface-alt hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300"
+      className="group block border border-border bg-surface-alt hover:border-primary/40 transition-all duration-300"
     >
       {project.coverImage && (
-        <div className="relative overflow-hidden">
+        <div className="overflow-hidden">
           <img
             src={urlForImage(project.coverImage).width(600).height(300).url()}
             alt={project.title}
-            className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-44 object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-surface-alt/60 to-transparent" />
         </div>
       )}
-      <div className="p-4">
-        <h3 className="font-semibold text-lg mb-1 text-foreground group-hover:text-primary transition-colors">
+      <div className="p-5">
+        <h3 className="font-mono font-bold text-base mb-2 text-foreground group-hover:text-primary transition-colors">
           {project.title}
         </h3>
-        <p className="text-sm text-muted line-clamp-2 mb-3">{project.description}</p>
+        <p className="text-sm text-muted leading-relaxed line-clamp-2 mb-4">
+          {project.description}
+        </p>
         {project.techStack && project.techStack.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
             {project.techStack.map((tech) => (
-              <span
-                key={tech}
-                className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded border border-primary/20"
-              >
+              <span key={tech} className="text-xs font-mono text-muted group-hover:text-primary/80 transition-colors">
                 {tech}
               </span>
             ))}

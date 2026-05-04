@@ -17,26 +17,30 @@ export default function PostCard({ post }: PostCardProps) {
   return (
     <Link
       href={`/blog/${post.slug.current}`}
-      className="group block border border-border rounded-lg overflow-hidden bg-surface-alt hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300"
+      className="group block border border-border bg-surface-alt hover:border-primary/40 transition-all duration-300"
     >
       {post.coverImage && (
-        <img
-          src={urlForImage(post.coverImage).width(600).height(300).url()}
-          alt={post.title}
-          className="w-full h-36 object-cover"
-        />
+        <div className="overflow-hidden">
+          <img
+            src={urlForImage(post.coverImage).width(600).height(300).url()}
+            alt={post.title}
+            className="w-full h-40 object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500"
+          />
+        </div>
       )}
-      <div className="p-4">
+      <div className="p-5">
         {post.publishedAt && (
-          <time className="text-xs text-muted">
+          <time className="text-xs font-mono text-muted tracking-wide uppercase block mb-2">
             {new Date(post.publishedAt).toLocaleDateString('zh-CN')}
           </time>
         )}
-        <h3 className="font-semibold text-lg mt-1 mb-1 text-foreground group-hover:text-primary transition-colors">
+        <h3 className="font-mono font-bold text-base mb-2 text-foreground group-hover:text-primary transition-colors">
           {post.title}
         </h3>
         {post.excerpt && (
-          <p className="text-sm text-muted line-clamp-2">{post.excerpt}</p>
+          <p className="text-sm text-muted leading-relaxed line-clamp-2">
+            {post.excerpt}
+          </p>
         )}
       </div>
     </Link>

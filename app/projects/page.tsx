@@ -16,37 +16,40 @@ export default async function ProjectsPage() {
   const uniqueTechs = [...new Set(allTechs as string[])].sort();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12 animate-fade-in-up">
-      <h1 className="text-3xl font-bold mb-8 font-mono">
-        <span className="text-primary mr-2">&gt;</span>
+    <div className="max-w-6xl mx-auto px-6 py-16 animate-slide-up">
+      <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-4">
+        Work
+      </p>
+      <h1 className="font-mono text-4xl font-bold text-foreground mb-10">
         Projects
       </h1>
 
       {uniqueTechs.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-x-5 gap-y-2 mb-12">
           {uniqueTechs.map((tech) => (
             <a
               key={tech}
               href={`/projects?tech=${encodeURIComponent(tech)}`}
-              className="text-xs bg-surface-alt text-muted border border-border px-3 py-1.5 rounded-full hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200"
+              className="font-mono text-xs text-muted hover:text-primary transition-colors"
             >
-              {tech}
+              #{tech}
             </a>
           ))}
         </div>
       )}
 
       {projects.length === 0 ? (
-        <div className="py-20 text-center">
-          <p className="font-mono text-muted text-lg">
-            <span className="text-primary">$</span> ls projects/
+        <div className="py-24 text-center">
+          <p className="font-mono text-muted">
+            no projects found <span className="text-border">—</span> add one in <span className="text-primary">/admin</span>
           </p>
-          <p className="text-muted text-sm mt-2">No projects found. Create one in /admin</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
           {projects.map((project: any) => (
-            <ProjectCard key={project._id} project={project} />
+            <div key={project._id} className="bg-surface">
+              <ProjectCard project={project} />
+            </div>
           ))}
         </div>
       )}

@@ -15,10 +15,11 @@ export default async function Footer() {
 
   return (
     <footer className="border-t border-border mt-auto">
-      <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-center text-sm text-muted">
-        <span className="text-border select-none mr-2">{'/*'}</span>
-        {footerText ? <p>{footerText}</p> : <p>&copy; {new Date().getFullYear()}</p>}
-        <span className="text-border select-none ml-2">{'*/'}</span>
+      <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between text-xs font-mono text-muted">
+        <span>{footerText || `© ${new Date().getFullYear()}`}</span>
+        <span>
+          <span className="text-border">built</span> with <span className="text-primary">[ code ]</span>
+        </span>
       </div>
     </footer>
   );

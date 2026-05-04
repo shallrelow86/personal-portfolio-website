@@ -32,32 +32,33 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     .catch(() => []);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12 animate-fade-in-up">
+    <div className="max-w-3xl mx-auto px-6 py-16 animate-slide-up">
       {post.coverImage && (
-        <div className="relative rounded-lg overflow-hidden mb-8">
-          <img
-            src={urlForImage(post.coverImage).width(1200).height(400).url()}
-            alt={post.title}
-            className="w-full h-64 object-cover"
-          />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-surface to-transparent" />
-        </div>
+        <img
+          src={urlForImage(post.coverImage).width(1200).height(400).url()}
+          alt={post.title}
+          className="w-full h-56 md:h-72 object-cover border border-border mb-12"
+        />
       )}
 
-      <h1 className="text-3xl font-bold mb-4 font-mono">
-        <span className="text-accent mr-2">&gt;</span>
+      <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-4">
+        Blog Post
+      </p>
+      <h1 className="font-mono text-4xl md:text-5xl font-bold text-foreground mb-4">
         {post.title}
       </h1>
 
-      <div className="flex items-center gap-4 text-sm text-muted mb-8">
+      <div className="flex items-center gap-6 mb-12">
         {post.publishedAt && (
-          <time>{new Date(post.publishedAt).toLocaleDateString('zh-CN')}</time>
+          <time className="font-mono text-sm text-muted">
+            {new Date(post.publishedAt).toLocaleDateString('zh-CN')}
+          </time>
         )}
         {post.tags?.length > 0 && (
-          <div className="flex gap-1">
+          <div className="flex gap-3">
             {post.tags.map((tag: string) => (
-              <span key={tag} className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded text-xs">
-                {tag}
+              <span key={tag} className="font-mono text-xs text-primary">
+                #{tag}
               </span>
             ))}
           </div>
@@ -65,15 +66,26 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </div>
 
       {post.body && (
-        <article className="prose max-w-none mb-12 text-muted [&_h2]:text-foreground [&_h3]:text-foreground [&_strong]:text-foreground [&_a]:text-primary [&_code]:bg-surface-alt [&_code]:text-primary [&_pre]:bg-surface-alt [&_pre]:border [&_pre]:border-border [&_blockquote]:border-primary/30 [&_blockquote]:text-muted">
+        <article className="prose prose-invert max-w-none mb-20
+          text-muted leading-relaxed
+          [&_h2]:font-mono [&_h2]:text-foreground [&_h2]:text-2xl [&_h2]:mt-12 [&_h2]:mb-6
+          [&_h3]:font-mono [&_h3]:text-foreground [&_h3]:text-lg [&_h3]:mt-8 [&_h3]:mb-4
+          [&_p]:mb-5 [&_strong]:text-foreground [&_strong]:font-bold
+          [&_a]:font-mono [&_a]:text-primary [&_a]:no-underline
+          [&_code]:font-mono [&_code]:text-primary [&_code]:text-sm
+          [&_pre]:bg-surface-alt [&_pre]:border [&_pre]:border-border [&_pre]:p-4 [&_pre]:text-sm
+          [&_blockquote]:border-l-2 [&_blockquote]:border-primary/30 [&_blockquote]:pl-4 [&_blockquote]:text-muted
+          [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1
+        ">
           <PortableText value={post.body} />
         </article>
       )}
 
+      <hr className="border-border mb-12" />
+
       <section>
-        <h2 className="text-xl font-bold mb-4 font-mono">
-          <span className="text-primary mr-2">&gt;</span>
-          评论
+        <h2 className="font-mono text-lg font-bold text-foreground mb-8">
+          Comments ({comments.length})
         </h2>
         <CommentList comments={comments} />
         <CommentForm postId={post._id} />

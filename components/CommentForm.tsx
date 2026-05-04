@@ -48,60 +48,62 @@ export default function CommentForm({ postId }: CommentFormProps) {
   };
 
   if (status === 'success') {
-    return <p className="text-success text-sm py-4">评论已提交，等待审核。谢谢！</p>;
+    return (
+      <p className="font-mono text-sm text-success py-6 border-t border-border mt-8">
+        评论已提交，等待审核。谢谢！
+      </p>
+    );
   }
 
-  const inputClass = 'w-full bg-surface-alt border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors';
+  const inputClass =
+    'w-full bg-surface border border-border px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary transition-colors';
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 py-6 border-t border-border">
-      <h3 className="font-semibold text-lg font-mono">
-        <span className="text-primary mr-1">&gt;</span>
-        发表评论
-      </h3>
-      <div>
+    <form onSubmit={handleSubmit} className="space-y-4 py-8 border-t border-border mt-8">
+      <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-4">
+        Leave a comment
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <input
           type="text"
-          placeholder="你的名字"
+          placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
           maxLength={60}
           className={inputClass}
         />
-      </div>
-      <div>
         <input
           type="email"
-          placeholder="你的邮箱（不会公开）"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
           className={inputClass}
         />
       </div>
-      <div>
-        <textarea
-          placeholder="你的评论"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          required
-          maxLength={2000}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
+      <textarea
+        placeholder="Your comment..."
+        value={body}
+        onChange={(e) => setBody(e.target.value)}
+        required
+        maxLength={2000}
+        rows={4}
+        className={inputClass}
+      />
       <Turnstile
         sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
         onVerify={(token) => { turnstileRef.current = token; }}
       />
-      {status === 'error' && <p className="text-error text-sm">{errorMsg}</p>}
+      {status === 'error' && (
+        <p className="font-mono text-sm text-error">{errorMsg}</p>
+      )}
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="bg-primary text-surface font-medium px-5 py-2 rounded-lg text-sm hover:bg-primary-hover disabled:opacity-50 transition-colors"
+        className="font-mono text-sm border border-border px-6 py-3 text-muted hover:text-primary hover:border-primary transition-colors disabled:opacity-40"
       >
-        {status === 'submitting' ? '提交中...' : '提交'}
+        {status === 'submitting' ? 'Submitting...' : 'Submit'}
       </button>
     </form>
   );

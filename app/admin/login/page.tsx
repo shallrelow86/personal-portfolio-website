@@ -36,11 +36,13 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-surface">
-      <form onSubmit={handleSubmit} className="bg-surface-alt border border-border p-8 rounded-lg shadow-lg w-full max-w-sm">
-        <h1 className="text-xl font-semibold text-center mb-6 font-mono text-foreground">
-          <span className="text-primary mr-1">&gt;</span>
-          Admin Login
-        </h1>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-surface-alt border border-border p-10 w-full max-w-md"
+      >
+        <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-6 text-center">
+          Authentication Required
+        </p>
 
         <input
           type="password"
@@ -49,19 +51,19 @@ export default function AdminLoginPage() {
           placeholder="Password"
           required
           autoFocus
-          className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors mb-4"
+          className="w-full bg-surface border border-border px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary transition-colors mb-5"
         />
 
         {error && (
-          <p className="text-error text-sm mb-4">{error}</p>
+          <p className="font-mono text-sm text-error mb-5">{error}</p>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2 bg-primary text-surface rounded-lg text-sm font-medium hover:bg-primary-hover disabled:opacity-50 transition-colors"
+          className="w-full font-mono text-sm border border-border py-3 text-muted hover:text-primary hover:border-primary transition-colors disabled:opacity-40"
         >
-          {loading ? 'Signing in...' : 'Sign In'}
+          {loading ? 'Authenticating...' : 'Sign In'}
         </button>
       </form>
     </div>

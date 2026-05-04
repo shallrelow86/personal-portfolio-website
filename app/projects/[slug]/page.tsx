@@ -26,43 +26,39 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   if (!project) notFound();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12 animate-fade-in-up">
+    <div className="max-w-4xl mx-auto px-6 py-16 animate-slide-up">
       {project.coverImage && (
-        <div className="relative rounded-lg overflow-hidden mb-8">
-          <img
-            src={urlForImage(project.coverImage).width(1200).height(400).url()}
-            alt={project.title}
-            className="w-full h-64 object-cover"
-          />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-surface to-transparent" />
-        </div>
+        <img
+          src={urlForImage(project.coverImage).width(1200).height(400).url()}
+          alt={project.title}
+          className="w-full h-56 md:h-72 object-cover border border-border mb-12"
+        />
       )}
 
-      <h1 className="text-3xl font-bold mb-4 font-mono">
-        <span className="text-primary mr-2">&gt;</span>
+      <p className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-4">
+        Project
+      </p>
+      <h1 className="font-mono text-4xl md:text-5xl font-bold text-foreground mb-6">
         {project.title}
       </h1>
 
       {project.techStack && project.techStack.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-x-5 gap-y-2 mb-8">
           {project.techStack.map((tech: string) => (
-            <span
-              key={tech}
-              className="text-sm bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full"
-            >
+            <span key={tech} className="font-mono text-sm text-muted">
               {tech}
             </span>
           ))}
         </div>
       )}
 
-      <div className="flex gap-4 mb-8">
+      <div className="flex gap-6 mb-12">
         {project.githubUrl && (
           <a
             href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm bg-surface-alt border border-border px-4 py-2 rounded-lg hover:border-primary/50 hover:text-primary transition-all"
+            className="font-mono text-sm text-muted hover:text-primary transition-colors border-b border-border hover:border-primary pb-0.5"
           >
             GitHub &rarr;
           </a>
@@ -72,7 +68,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             href={project.liveUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm bg-surface-alt border border-border px-4 py-2 rounded-lg hover:border-primary/50 hover:text-primary transition-all"
+            className="font-mono text-sm text-muted hover:text-primary transition-colors border-b border-border hover:border-primary pb-0.5"
           >
             Live Demo &rarr;
           </a>
@@ -80,15 +76,23 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       </div>
 
       {project.body && (
-        <article className="prose max-w-none mb-12 text-muted [&_h2]:text-foreground [&_h3]:text-foreground [&_strong]:text-foreground [&_a]:text-primary [&_code]:bg-surface-alt [&_code]:text-primary [&_pre]:bg-surface-alt [&_pre]:border [&_pre]:border-border">
+        <article className="prose prose-invert max-w-none mb-16
+          text-muted leading-relaxed
+          [&_h2]:font-mono [&_h2]:text-foreground [&_h2]:text-2xl [&_h2]:mt-12 [&_h2]:mb-6
+          [&_h3]:font-mono [&_h3]:text-foreground [&_h3]:text-lg [&_h3]:mt-8 [&_h3]:mb-4
+          [&_p]:mb-5 [&_strong]:text-foreground [&_strong]:font-bold
+          [&_a]:font-mono [&_a]:text-primary [&_a]:no-underline
+          [&_code]:font-mono [&_code]:text-primary [&_code]:text-sm
+          [&_pre]:bg-surface-alt [&_pre]:border [&_pre]:border-border [&_pre]:p-4 [&_pre]:text-sm
+          [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1
+        ">
           <PortableText value={project.body} />
         </article>
       )}
 
       {project.screenshots && project.screenshots.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 font-mono">
-            <span className="text-primary mr-2">&gt;</span>
+        <section className="mb-16">
+          <h2 className="font-mono text-xl font-bold text-foreground mb-6">
             Screenshots
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -97,7 +101,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 key={i}
                 src={urlForImage(img).width(800).url()}
                 alt={`${project.title} screenshot ${i + 1}`}
-                className="rounded-lg border border-border"
+                className="border border-border"
               />
             ))}
           </div>
@@ -105,12 +109,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       )}
 
       {project.gitRepoData && (
-        <section className="p-5 bg-surface-alt border border-border rounded-lg">
-          <h3 className="font-semibold mb-3 font-mono text-sm text-muted">Repository Stats</h3>
-          <div className="flex gap-6 text-sm text-muted">
-            {project.gitRepoData.stars != null && <span>⭐ {project.gitRepoData.stars} stars</span>}
-            {project.gitRepoData.forks != null && <span>🍴 {project.gitRepoData.forks} forks</span>}
-            {project.gitRepoData.language && <span>🔤 {project.gitRepoData.language}</span>}
+        <section className="border border-border p-6 bg-surface-alt">
+          <h3 className="font-mono text-xs text-muted tracking-[0.2em] uppercase mb-4">
+            Repository
+          </h3>
+          <div className="flex gap-8 font-mono text-sm text-muted">
+            {project.gitRepoData.stars != null && <span>stars {project.gitRepoData.stars}</span>}
+            {project.gitRepoData.forks != null && <span>forks {project.gitRepoData.forks}</span>}
+            {project.gitRepoData.language && <span>{project.gitRepoData.language}</span>}
           </div>
         </section>
       )}
