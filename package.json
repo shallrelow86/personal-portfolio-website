@@ -21,6 +21,9 @@
     "sanity": "^3.0.0",
     "styled-components": "^6.0.0"
   },
+  "optionalDependencies": {
+    "@next/swc-win32-x64-msvc": "^16.2.4"
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
