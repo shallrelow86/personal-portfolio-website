@@ -1,3 +1,10 @@
+import { client } from "@/sanity/lib/client";
+import {
+  PROFILE_QUERY,
+  FEATURED_PROJECTS_QUERY,
+  LATEST_POSTS_QUERY,
+  SITE_SETTINGS_QUERY,
+} from "@/sanity/lib/queries";
 import LoadingScreen from "@/components/LoadingScreen";
 import CursorGlow from "@/components/CursorGlow";
 import ScrollIndicator from "@/components/ScrollIndicator";
@@ -6,7 +13,17 @@ import Projects from "@/components/Projects";
 import Blog from "@/components/Blog";
 import Footer from "@/components/Footer";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [profile, projects, posts, settings] = await Promise.all([
+    client.fetch(PROFILE_QUERY).catch(() => null),
+    client.fetch(FEATURED_PROJECTS_QUERY).catch(() => []),
+    client.fetch(LATEST_POSTS_QUERY).catch(() => []),
+    client.fetch(SITE_SETTINGS_QUERY).catch(() => null),
+  ]);
+
+  const hasProjects = projects.length > 0;
+  const hasPosts = posts.length > 0;
+
   return (
     <>
       <LoadingScreen />
@@ -21,13 +38,19 @@ export default function HomePage() {
         }}
       />
 
-      <ScrollIndicator />
+      <ScrollIndicator
+        sections={[
+          { id: "hero", label: "Home" },
+          ...(hasProjects ? [{ id: "projects", label: "Projects" }] : []),
+          ...(hasPosts ? [{ id: "blog", label: "Blog" }] : []),
+        ]}
+      />
 
       <main className="relative z-10 h-screen overflow-y-auto snap-y snap-mandatory">
-        <Hero />
-        <Projects />
-        <Blog />
-        <Footer />
+        <Hero profile={profile} />
+        {hasProjects && <Projects projects={projects} />}
+        {hasPosts && <Blog posts={posts} />}
+        <Footer profile={profile} settings={settings} />
       </main>
     </>
   );

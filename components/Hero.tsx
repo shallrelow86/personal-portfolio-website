@@ -3,14 +3,29 @@
 import { motion } from "motion/react";
 import { Mail, ArrowDown } from "lucide-react";
 import { GithubIcon, TwitterIcon } from "@/components/Icons";
+import { urlForImage } from "@/sanity/lib/client";
 
-const name = "Developer";
+interface SocialLink {
+  platform: string;
+  url: string;
+}
+
+interface Profile {
+  name?: string;
+  title?: string;
+  avatar?: any;
+  socialLinks?: SocialLink[];
+}
+
+const socialIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  GitHub: GithubIcon,
+  Twitter: TwitterIcon,
+  X: TwitterIcon,
+};
 
 const stagger = {
   initial: {},
-  animate: {
-    transition: { staggerChildren: 0.12 },
-  },
+  animate: { transition: { staggerChildren: 0.12 } },
 };
 
 const fadeUp = {
@@ -22,13 +37,11 @@ const fadeUp = {
   },
 };
 
-const socials = [
-  { icon: GithubIcon, href: "https://github.com", label: "GitHub" },
-  { icon: TwitterIcon, href: "https://twitter.com", label: "Twitter" },
-  { icon: Mail, href: "mailto:hello@example.com", label: "Email" },
-];
+export default function Hero({ profile }: { profile: Profile | null }) {
+  const name = profile?.name || "Developer";
+  const title = profile?.title || "Frontend Developer";
+  const socials = profile?.socialLinks || [];
 
-export default function Hero() {
   return (
     <section
       id="hero"
@@ -62,22 +75,25 @@ export default function Hero() {
           variants={fadeUp}
           className="mt-6 text-lg lg:text-xl text-text-secondary max-w-xl"
         >
-          Frontend Developer &middot; UI Designer &middot; Open Source Lover
+          {title}
         </motion.p>
 
         <motion.div variants={fadeUp} className="flex gap-4 mt-8">
-          {socials.map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={s.label}
-              className="p-2 text-text-muted hover:text-text-primary transition-colors duration-300"
-            >
-              <s.icon className="w-5 h-5" />
-            </a>
-          ))}
+          {socials.map((s) => {
+            const Icon = socialIconMap[s.platform] || Mail;
+            return (
+              <a
+                key={s.platform}
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.platform}
+                className="p-2 text-text-muted hover:text-text-primary transition-colors duration-300"
+              >
+                <Icon className="w-5 h-5" />
+              </a>
+            );
+          })}
         </motion.div>
 
         <motion.a

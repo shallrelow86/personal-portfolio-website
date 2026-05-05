@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from "react";
 
-const sections = [
-  { id: "hero", label: "Home" },
-  { id: "projects", label: "Projects" },
-  { id: "blog", label: "Blog" },
-];
+interface Section {
+  id: string;
+  label: string;
+}
 
-export default function ScrollIndicator() {
+export default function ScrollIndicator({ sections }: { sections: Section[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -20,12 +19,14 @@ export default function ScrollIndicator() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [sections.length]);
 
   const scrollTo = (index: number) => {
     const el = document.getElementById(sections[index].id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
+
+  if (sections.length <= 1) return null;
 
   return (
     <div className="hidden md:flex fixed right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-4">
