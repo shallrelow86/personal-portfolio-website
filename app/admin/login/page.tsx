@@ -36,21 +36,21 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-surface">
-      <form onSubmit={handleSubmit} className="bg-surface-alt border border-border rounded-xl p-8 w-full max-w-sm">
+      <form onSubmit={handleSubmit} className="bg-surface border border-border rounded-xl p-8 w-full max-w-sm">
         <h1 className="text-lg font-semibold text-center mb-6">Admin Login</h1>
 
         <input
           type="password" value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password" required autoFocus
-          className="w-full bg-surface border border-border rounded-lg px-4 py-2.5 text-sm placeholder:text-muted focus:outline-none focus:border-primary transition-colors mb-4"
+          className="w-full bg-surface border border-border rounded-lg px-4 py-2.5 text-sm placeholder:text-text-muted focus:outline-none focus:border-accent-start transition-colors mb-4"
         />
 
-        {error && <p className="text-error text-sm mb-4">{error}</p>}
+        {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
 
         <button
           type="submit" disabled={loading}
-          className="w-full bg-primary text-surface font-medium py-2.5 rounded-lg text-sm hover:bg-primary-hover transition-colors disabled:opacity-50"
+          className="w-full bg-accent-start text-surface font-medium py-2.5 rounded-lg text-sm hover:bg-accent-end transition-colors disabled:opacity-50"
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>

@@ -49,28 +49,27 @@ export default function Blog({ posts }: { posts: Post[] }) {
               whileInView="whileInView"
               viewport={{ once: true, amount: 0.2 }}
               transition={{ delay: i * 0.08 }}
-              className="group flex items-center justify-between py-6 border-b border-border hover:bg-white/[0.02] transition-colors duration-300 px-4 rounded-lg"
             >
-              <div className="flex flex-col gap-1 min-w-0">
-                {post.publishedAt && (
-                  <span className="text-sm text-text-muted font-mono">
-                    {new Date(post.publishedAt).toLocaleDateString("zh-CN")}
-                  </span>
-                )}
-                <h3 className="text-lg font-semibold text-text-primary group-hover:text-white transition-colors">
-                  {post.title}
-                </h3>
-                {post.excerpt && (
-                  <p className="text-sm text-text-secondary line-clamp-1">
-                    {post.excerpt}
-                  </p>
-                )}
-              </div>
               <Link
                 href={`/blog/${post.slug.current}`}
-                className="flex-shrink-0 ml-4 p-2 -m-2 text-text-muted group-hover:text-text-primary group-hover:translate-x-1 transition-all duration-300"
+                className="group flex items-center justify-between py-6 border-b border-border hover:bg-white/[0.02] transition-colors duration-300 px-4 rounded-lg"
               >
-                <ArrowRight className="w-5 h-5" />
+                <div className="flex flex-col gap-1 min-w-0">
+                  {post.publishedAt && (
+                    <span className="text-sm text-text-muted font-mono">
+                      {new Date(post.publishedAt).toLocaleDateString("zh-CN")}
+                    </span>
+                  )}
+                  <h3 className="text-lg font-semibold text-text-primary group-hover:text-accent-start transition-colors">
+                    {post.title}
+                  </h3>
+                  {post.excerpt && (
+                    <p className="text-sm text-text-secondary line-clamp-1">
+                      {post.excerpt}
+                    </p>
+                  )}
+                </div>
+                <ArrowRight className="w-5 h-5 flex-shrink-0 ml-4 text-text-muted group-hover:text-text-primary group-hover:translate-x-1 transition-all duration-300" />
               </Link>
             </motion.div>
           ))}

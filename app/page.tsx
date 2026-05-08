@@ -5,8 +5,6 @@ import {
   LATEST_POSTS_QUERY,
   SITE_SETTINGS_QUERY,
 } from "@/sanity/lib/queries";
-import LoadingScreen from "@/components/LoadingScreen";
-import CursorGlow from "@/components/CursorGlow";
 import ScrollIndicator from "@/components/ScrollIndicator";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
@@ -26,9 +24,6 @@ export default async function HomePage() {
 
   return (
     <>
-      <LoadingScreen />
-      <CursorGlow />
-
       {/* Noise texture overlay */}
       <div
         className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]"

@@ -15,6 +15,40 @@ export function GithubIcon({ className }: { className?: string }) {
   );
 }
 
+export function GiteeIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 8h5a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h-1l3 4" />
+    </svg>
+  );
+}
+
+export function CsdnIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M9 8v8M15 8v8M9 12h6" />
+    </svg>
+  );
+}
+
 export function TwitterIcon({ className }: { className?: string }) {
   return (
     <svg

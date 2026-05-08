@@ -49,14 +49,14 @@ export default function CommentForm({ postId }: CommentFormProps) {
 
   if (status === 'success') {
     return (
-      <p className="text-success text-sm py-6 border-t border-border mt-8">
+      <p className="text-emerald-400 text-sm py-6 border-t border-border mt-8">
         评论已提交，等待审核。谢谢！
       </p>
     );
   }
 
   const inputClass =
-    'w-full bg-surface border border-border rounded-lg px-4 py-2.5 text-sm placeholder:text-muted focus:outline-none focus:border-primary transition-colors';
+    'w-full bg-surface border border-border rounded-lg px-4 py-2.5 text-sm placeholder:text-text-muted focus:outline-none focus:border-accent-start transition-colors';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 py-8 border-t border-border mt-8">
@@ -82,10 +82,10 @@ export default function CommentForm({ postId }: CommentFormProps) {
         sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
         onVerify={(token) => { turnstileRef.current = token; }}
       />
-      {status === 'error' && <p className="text-error text-sm">{errorMsg}</p>}
+      {status === 'error' && <p className="text-red-400 text-sm">{errorMsg}</p>}
       <button
         type="submit" disabled={status === 'submitting'}
-        className="bg-primary text-surface font-medium px-5 py-2.5 rounded-lg text-sm hover:bg-primary-hover transition-colors disabled:opacity-50"
+        className="bg-accent-start text-surface font-medium px-5 py-2.5 rounded-lg text-sm hover:bg-accent-end transition-colors disabled:opacity-50"
       >
         {status === 'submitting' ? '提交中...' : '提交评论'}
       </button>

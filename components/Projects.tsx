@@ -55,56 +55,56 @@ export default function Projects({ projects }: { projects: Project[] }) {
                 whileInView="whileInView"
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ delay: i * 0.1 }}
-                className={`group relative overflow-hidden rounded-2xl bg-surface/50 backdrop-blur-xl border border-border p-6 lg:p-8 hover:border-accent-start/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(124,58,237,0.1)] hover:-translate-y-1 ${
+                className={`${
                   isLarge ? "md:col-span-2" : ""
                 }`}
               >
-                {p.coverImage ? (
-                  <div className="rounded-xl overflow-hidden">
-                    <img
-                      src={urlForImage(p.coverImage).width(1200).height(600).url()}
-                      alt={p.title}
-                      className="w-full aspect-video object-cover group-hover:scale-[1.02] transition-transform duration-500"
-                    />
-                  </div>
-                ) : (
-                  <div className="rounded-xl overflow-hidden bg-background border border-border">
-                    <div className="aspect-video bg-gradient-to-br from-surface to-background flex items-center justify-center text-text-muted text-sm font-mono">
-                      <span className="opacity-30">preview</span>
+                <Link
+                  href={`/projects/${p.slug.current}`}
+                  className="group relative overflow-hidden rounded-2xl bg-surface/50 backdrop-blur-xl border border-border p-6 lg:p-8 hover:border-accent-start/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(124,58,237,0.1)] hover:-translate-y-1 block"
+                >
+                  {p.coverImage ? (
+                    <div className="rounded-xl overflow-hidden">
+                      <img
+                        src={urlForImage(p.coverImage).width(1200).height(600).url()}
+                        alt={p.title}
+                        className="w-full aspect-video object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                      />
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div className="rounded-xl overflow-hidden bg-background border border-border">
+                      <div className="aspect-video bg-gradient-to-br from-surface to-background flex items-center justify-center text-text-muted text-sm font-mono">
+                        <span className="opacity-30">preview</span>
+                      </div>
+                    </div>
+                  )}
 
-                <div className="mt-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-xl font-semibold text-text-primary">
-                      {p.title}
-                    </h3>
-                    <Link
-                      href={`/projects/${p.slug.current}`}
-                      className="p-1 -m-1 text-text-muted group-hover:text-text-primary transition-colors"
-                    >
-                      <ArrowRight className="w-5 h-5" />
-                    </Link>
-                  </div>
-                  {p.description && (
-                    <p className="text-text-secondary text-sm mt-2 leading-relaxed">
-                      {p.description}
-                    </p>
-                  )}
-                  {p.techStack && p.techStack.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {p.techStack.map((tech) => (
-                        <span
-                          key={tech}
-                          className="text-xs bg-background text-text-muted px-3 py-1 rounded-full border border-border"
-                        >
-                          {tech}
-                        </span>
-                      ))}
+                  <div className="mt-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="text-xl font-semibold text-text-primary group-hover:text-accent-start transition-colors">
+                        {p.title}
+                      </h3>
+                      <ArrowRight className="w-5 h-5 text-text-muted group-hover:text-text-primary group-hover:translate-x-1 transition-all duration-300 flex-shrink-0" />
                     </div>
-                  )}
-                </div>
+                    {p.description && (
+                      <p className="text-text-secondary text-sm mt-2 leading-relaxed">
+                        {p.description}
+                      </p>
+                    )}
+                    {p.techStack && p.techStack.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {p.techStack.map((tech) => (
+                          <span
+                            key={tech}
+                            className="text-xs bg-background text-text-muted px-3 py-1 rounded-full border border-border"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </Link>
               </motion.div>
             );
           })}

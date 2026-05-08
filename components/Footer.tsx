@@ -1,7 +1,7 @@
 "use client";
 
 import { Mail } from "lucide-react";
-import { GithubIcon, TwitterIcon } from "@/components/Icons";
+import { GithubIcon, TwitterIcon, GiteeIcon, CsdnIcon } from "@/components/Icons";
 
 interface SocialLink {
   platform: string;
@@ -21,6 +21,8 @@ const socialIconMap: Record<string, React.ComponentType<{ className?: string }>>
   GitHub: GithubIcon,
   Twitter: TwitterIcon,
   X: TwitterIcon,
+  Gitee: GiteeIcon,
+  CSDN: CsdnIcon,
 };
 
 export default function Footer({

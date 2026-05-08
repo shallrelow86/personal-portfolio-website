@@ -17,16 +17,16 @@ export default async function Header() {
   return (
     <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-border">
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="font-semibold text-lg tracking-tight hover:text-primary transition-colors">
+        <Link href="/" className="font-semibold text-lg tracking-tight hover:text-accent-start transition-colors">
           {nav.length > 0 ? nav[0]?.label?.split('/')[0] : 'Portfolio'}
-          <span className="text-primary">.</span>
+          <span className="text-accent-start">.</span>
         </Link>
         <nav className="flex gap-1">
           {nav.map((item: { label: string; url: string }) => (
             <Link
               key={item.url}
               href={item.url}
-              className="px-3 py-2 text-sm text-muted hover:text-foreground transition-colors rounded-md hover:bg-surface-alt"
+              className="px-3 py-2 text-sm text-text-muted hover:text-text-primary transition-colors rounded-md hover:bg-surface"
             >
               {item.label}
             </Link>
