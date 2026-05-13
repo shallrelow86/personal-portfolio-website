@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Projects",
 };
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
   const [projects, allTechs] = await Promise.all([

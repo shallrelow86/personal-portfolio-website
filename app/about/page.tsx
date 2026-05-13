@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "About",
 };
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function AboutPage() {
   const profile = await client.fetch(PROFILE_QUERY).catch(() => null);

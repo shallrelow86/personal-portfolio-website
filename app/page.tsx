@@ -1,12 +1,13 @@
 import { client } from "@/sanity/lib/client";
 
-export const revalidate = 60;
 import {
   PROFILE_QUERY,
   FEATURED_PROJECTS_QUERY,
   LATEST_POSTS_QUERY,
   SITE_SETTINGS_QUERY,
 } from "@/sanity/lib/queries";
+
+export const dynamic = "force-dynamic";
 import ScrollIndicator from "@/components/ScrollIndicator";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
