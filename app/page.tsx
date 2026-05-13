@@ -1,4 +1,6 @@
 import { client } from "@/sanity/lib/client";
+
+export const revalidate = 60;
 import {
   PROFILE_QUERY,
   FEATURED_PROJECTS_QUERY,

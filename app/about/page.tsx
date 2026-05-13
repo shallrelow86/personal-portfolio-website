@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "About",
 };
 
+export const revalidate = 60;
+
 export default async function AboutPage() {
   const profile = await client.fetch(PROFILE_QUERY).catch(() => null);
 

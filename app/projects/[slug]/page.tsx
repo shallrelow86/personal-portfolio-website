@@ -5,6 +5,8 @@ import { PROJECT_BY_SLUG_QUERY, ALL_PROJECT_SLUGS_QUERY } from "@/sanity/lib/que
 import { PortableText } from "@portabletext/react";
 import RevealContent from "@/components/RevealContent";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const slugs = await client.fetch(ALL_PROJECT_SLUGS_QUERY).catch(() => []);
   return slugs.map((slug: string) => ({ slug }));

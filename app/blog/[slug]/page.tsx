@@ -11,6 +11,8 @@ import CommentForm from "@/components/CommentForm";
 import CommentList from "@/components/CommentList";
 import RevealContent from "@/components/RevealContent";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const slugs = await client.fetch(ALL_POST_SLUGS_QUERY).catch(() => []);
   return slugs.map((slug: string) => ({ slug }));
