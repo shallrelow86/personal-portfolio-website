@@ -1,47 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
+import { createToken, setAuthCookie, verifyPassword } from "@/lib/auth";
 
-export const runtime = 'nodejs';
-
-export async function POST(request: NextRequest) {
-  try {
-    const { password } = await request.json();
-
-    if (!password || typeof password !== 'string') {
-      return NextResponse.json({ error: 'Password is required.' }, { status: 400 });
-    }
-
-    const expected = process.env.ADMIN_PASSWORD;
-    if (!expected) {
-      return NextResponse.json({ error: 'Server not configured.' }, { status: 500 });
-    }
-
-    // Secure comparison — compare hashes to avoid timingSafeEqual length error
-    const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
-    const expectedHash = crypto.createHash('sha256').update(expected).digest('hex');
-    const valid = crypto.timingSafeEqual(
-      Buffer.from(passwordHash),
-      Buffer.from(expectedHash)
-    );
-
-    if (!valid) {
-      return NextResponse.json({ error: 'Invalid password.' }, { status: 401 });
-    }
-
-    // Generate token: SHA-256 hash of the password
-    const hash = crypto.createHash('sha256').update(password).digest('hex');
-
-    const res = NextResponse.json({ success: true });
-    res.cookies.set('admin_token', hash, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60,
-      path: '/',
-    });
-
-    return res;
-  } catch {
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+export async function POST(req: Request) {
+  const { password } = await req.json();
+  if (!password) {
+    return Response.json({ error: "Password required" }, { status: 400 });
   }
+  const valid = await verifyPassword(password);
+  if (!valid) {
+    return Response.json({ error: "Invalid password" }, { status: 401 });
+  }
+  const token = await createToken();
+  await setAuthCookie(token);
+  return Response.json({ ok: true });
 }
