@@ -45,3 +45,8 @@ next-env.d.ts
 test-results/
 
 .vercel
+
+# database
+*.db
+*.db-shm
+*.db-wal
