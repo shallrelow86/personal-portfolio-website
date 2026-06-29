@@ -1,53 +1,32 @@
-import { client } from "@/sanity/lib/client";
-
-import {
-  PROFILE_QUERY,
-  FEATURED_PROJECTS_QUERY,
-  LATEST_POSTS_QUERY,
-  SITE_SETTINGS_QUERY,
-} from "@/sanity/lib/queries";
-
 export const dynamic = "force-dynamic";
-import ScrollIndicator from "@/components/ScrollIndicator";
+
+import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
 import Blog from "@/components/Blog";
 import Footer from "@/components/Footer";
+import { fetchApi, type Post, type Project, type Profile, type Settings } from "@/lib/api";
 
 export default async function HomePage() {
-  const [profile, projects, posts, settings] = await Promise.all([
-    client.fetch(PROFILE_QUERY).catch(() => null),
-    client.fetch(FEATURED_PROJECTS_QUERY).catch(() => []),
-    client.fetch(LATEST_POSTS_QUERY).catch(() => []),
-    client.fetch(SITE_SETTINGS_QUERY).catch(() => null),
+  const [posts, projects, profile, settings] = await Promise.all([
+    fetchApi<Post[]>("/api/posts"),
+    fetchApi<Project[]>("/api/projects"),
+    fetchApi<Profile>("/api/admin/profile"),
+    fetchApi<Settings>("/api/admin/settings"),
   ]);
 
-  const hasProjects = projects.length > 0;
-  const hasPosts = posts.length > 0;
+  const featured = (projects || []).filter((p) => p.featured);
+  const latest = (posts || []).slice(0, 3);
 
   return (
     <>
-      {/* Noise texture overlay */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "url(data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E)",
-        }}
-      />
-
-      <ScrollIndicator
-        sections={[
-          { id: "hero", label: "Home" },
-          ...(hasProjects ? [{ id: "projects", label: "Projects" }] : []),
-          ...(hasPosts ? [{ id: "blog", label: "Blog" }] : []),
-        ]}
-      />
-
-      <main className="relative z-10 h-screen overflow-y-auto snap-y snap-mandatory">
+      <Header />
+      <main>
         <Hero profile={profile} />
-        {hasProjects && <Projects projects={projects} />}
-        {hasPosts && <Blog posts={posts} />}
+        <hr className="border-t-2 border-border max-w-5xl mx-auto" />
+        <Projects projects={featured} />
+        <hr className="border-t-2 border-border max-w-5xl mx-auto" />
+        <Blog posts={latest} />
         <Footer profile={profile} settings={settings} />
       </main>
     </>

@@ -1,48 +1,30 @@
-import Link from 'next/link';
-import { urlForImage } from '@/sanity/lib/client';
+import Link from "next/link";
+import type { Project } from "@/lib/api";
 
-interface ProjectCardProps {
-  project: {
-    _id: string;
-    title: string;
-    slug: { current: string };
-    coverImage?: any;
-    description: string;
-    techStack?: string[];
-    githubUrl?: string;
-    liveUrl?: string;
-  };
-}
-
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project }: { project: Project }) {
   return (
-    <Link
-      href={`/projects/${project.slug.current}`}
-      className="group block bg-surface border border-border rounded-lg overflow-hidden hover:border-accent-start/30 transition-all duration-300 hover:shadow-lg hover:shadow-[0_0_30px_rgba(124,58,237,0.08)]"
-    >
-      {project.coverImage && (
-        <img
-          src={urlForImage(project.coverImage).width(600).height(340).url()}
-          alt={project.title}
-          className="w-full h-48 object-cover group-hover:scale-[1.02] transition-transform duration-500"
-        />
+    <Link href={`/projects/${project.slug}`} className="block border-2 border-border bg-surface hover:border-accent transition-colors group overflow-hidden">
+      {project.coverImage ? (
+        <img src={project.coverImage} alt={project.title} className="w-full h-48 object-cover border-b-2 border-border" />
+      ) : (
+        <div className="w-full h-48 bg-surface border-b-2 border-border flex items-center justify-center">
+          <span className="font-mono text-xs text-text-muted opacity-40">preview</span>
+        </div>
       )}
       <div className="p-5">
-        <h3 className="font-semibold text-lg mb-2 group-hover:text-accent-start transition-colors">
-          {project.title}
-        </h3>
-        <p className="text-sm text-text-muted leading-relaxed line-clamp-2 mb-3">
-          {project.description}
-        </p>
-        {project.techStack && project.techStack.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+        <h3 className="font-display text-xl group-hover:text-accent transition-colors">{project.title}</h3>
+        <p className="text-sm text-text-secondary mt-2 line-clamp-2">{project.description}</p>
+        {project.techStack.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-4">
             {project.techStack.slice(0, 4).map((tech) => (
-              <span key={tech} className="text-xs bg-surface border border-border px-2 py-0.5 rounded text-text-muted">
-                {tech}
-              </span>
+              <span key={tech} className="brutal-tag">{tech}</span>
             ))}
           </div>
         )}
+        <div className="flex gap-4 mt-4 font-mono text-xs">
+          {project.githubUrl && <span className="text-text-muted">GitHub</span>}
+          {project.liveUrl && <span className="text-text-muted">Live</span>}
+        </div>
       </div>
     </Link>
   );

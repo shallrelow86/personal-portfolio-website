@@ -1,31 +1,29 @@
 import { Metadata } from "next";
-import { client } from "@/sanity/lib/client";
-import { ALL_POSTS_QUERY } from "@/sanity/lib/queries";
-import PostCardList from "./PostCardList";
-import RevealContent from "@/components/RevealContent";
+import Header from "@/components/Header";
+import PostCard from "@/components/PostCard";
+import { fetchApi, type Post } from "@/lib/api";
 
-export const metadata: Metadata = {
-  title: "Blog",
-};
-
+export const metadata: Metadata = { title: "Blog" };
 export const dynamic = "force-dynamic";
 
 export default async function BlogPage() {
-  const posts = await client.fetch(ALL_POSTS_QUERY).catch(() => []);
+  const posts = await fetchApi<Post[]>("/api/posts");
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-16">
-      <RevealContent>
-        <h1 className="text-3xl font-bold mb-10">博客</h1>
-      </RevealContent>
-
-      {posts.length === 0 ? (
-        <div className="py-24 text-center text-text-muted">
-          暂无文章，请在 /admin 中撰写
-        </div>
-      ) : (
-        <PostCardList posts={posts} />
-      )}
-    </div>
+    <>
+      <Header />
+      <div className="max-w-3xl mx-auto px-6 py-16">
+        <h1 className="font-display text-4xl mb-10">Blog</h1>
+        {!posts || posts.length === 0 ? (
+          <p className="font-mono text-sm text-text-muted text-center py-24">暂无文章</p>
+        ) : (
+          <div className="space-y-6">
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }

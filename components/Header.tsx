@@ -1,32 +1,21 @@
-import Link from 'next/link';
-import { client } from '@/sanity/lib/client';
-import { SITE_SETTINGS_QUERY } from '@/sanity/lib/queries';
-
-async function getNav() {
-  try {
-    const settings = await client.fetch(SITE_SETTINGS_QUERY);
-    return settings?.primaryNav || [];
-  } catch {
-    return [];
-  }
-}
+import Link from "next/link";
+import { fetchApi, type Settings } from "@/lib/api";
 
 export default async function Header() {
-  const nav = await getNav();
+  const settings = await fetchApi<Settings>("/api/admin/settings");
 
   return (
-    <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-border">
+    <header className="sticky top-0 z-50 bg-bg border-b-2 border-border">
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="font-semibold text-lg tracking-tight hover:text-accent-start transition-colors">
-          {nav.length > 0 ? nav[0]?.label?.split('/')[0] : 'Portfolio'}
-          <span className="text-accent-start">.</span>
+        <Link href="/" className="font-display text-xl hover:text-accent transition-colors">
+          {settings?.siteTitle || "Portfolio"}
         </Link>
-        <nav className="flex gap-1">
-          {nav.map((item: { label: string; url: string }) => (
+        <nav className="flex gap-6">
+          {(settings?.primaryNav || []).map((item) => (
             <Link
               key={item.url}
               href={item.url}
-              className="px-3 py-2 text-sm text-text-muted hover:text-text-primary transition-colors rounded-md hover:bg-surface"
+              className="font-mono text-xs uppercase tracking-wider text-text-secondary hover:text-accent transition-colors"
             >
               {item.label}
             </Link>
