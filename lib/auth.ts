@@ -2,17 +2,20 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { compare } from "bcrypt";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "dev-secret-change-me"
-);
 const COOKIE_NAME = "admin_token";
+
+function getSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error("JWT_SECRET environment variable is required");
+  return new TextEncoder().encode(secret);
+}
 
 export async function createToken(): Promise<string> {
   return new SignJWT({ role: "admin" })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
-    .sign(JWT_SECRET);
+    .sign(getSecret());
 }
 
 export async function verifyAuth(): Promise<boolean> {
@@ -20,7 +23,7 @@ export async function verifyAuth(): Promise<boolean> {
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return false;
   try {
-    await jwtVerify(token, JWT_SECRET);
+    await jwtVerify(token, getSecret());
     return true;
   } catch {
     return false;

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BrutalInput from "@/components/ui/BrutalInput";
 import BrutalButton from "@/components/ui/BrutalButton";
+import Markdown from "@/components/Markdown";
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -28,7 +29,13 @@ export default function NewPostPage() {
   const handleTitleChange = (v: string) => {
     setTitle(v);
     if (!slug) {
-      setSlug(v.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""));
+      const generated = v
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9一-鿿-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+      setSlug(generated || "untitled-" + Date.now());
     }
   };
 
@@ -75,8 +82,9 @@ export default function NewPostPage() {
             </button>
           </div>
           {preview ? (
-            <div className="border-2 border-border bg-bg p-4 min-h-[300px] prose max-w-none text-sm"
-              dangerouslySetInnerHTML={{ __html: body }} />
+            <div className="border-2 border-border bg-bg p-4 min-h-[300px]">
+              <Markdown content={body} />
+            </div>
           ) : (
             <textarea value={body} onChange={(e) => setBody(e.target.value)}
               className="w-full border-2 border-border bg-bg px-4 py-2.5 text-sm font-mono text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-colors min-h-[300px] resize-y" />

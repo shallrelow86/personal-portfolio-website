@@ -11,6 +11,16 @@ export const profile = sqliteTable("profile", {
   resumeFile: text("resume_file").notNull().default(""),
 });
 
+export const category = sqliteTable("category", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  parentId: integer("parent_id"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
 export const post = sqliteTable("post", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
@@ -20,6 +30,8 @@ export const post = sqliteTable("post", {
   tags: text("tags").notNull().default("[]"),
   coverImage: text("cover_image").notNull().default(""),
   publishedAt: integer("published_at").notNull(),
+  categoryId: integer("category_id"),
+  status: text("status").notNull().default("published"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull(),
 });
@@ -36,6 +48,20 @@ export const project = sqliteTable("project", {
   githubUrl: text("github_url").notNull().default(""),
   liveUrl: text("live_url").notNull().default(""),
   featured: integer("featured").notNull().default(0),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const bookmark = sqliteTable("bookmark", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  url: text("url").notNull(),
+  description: text("description").notNull().default(""),
+  favicon: text("favicon").notNull().default(""),
+  reason: text("reason").notNull().default(""),
+  categoryId: integer("category_id"),
+  tags: text("tags").notNull().default("[]"),
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull(),

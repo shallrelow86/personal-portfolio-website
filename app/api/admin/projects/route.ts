@@ -21,24 +21,31 @@ export async function POST(req: Request) {
   const body = await req.json();
   const now = Date.now();
 
-  const result = await db.insert(schema.project).values({
-    title: body.title,
-    slug: body.slug,
-    description: body.description || "",
-    body: body.body || "",
-    coverImage: body.coverImage || "",
-    screenshots: JSON.stringify(body.screenshots || []),
-    techStack: JSON.stringify(body.techStack || []),
-    githubUrl: body.githubUrl || "",
-    liveUrl: body.liveUrl || "",
-    featured: body.featured ? 1 : 0,
-    sortOrder: body.sortOrder || 0,
-    createdAt: now,
-    updatedAt: now,
-  });
+  try {
+    const result = await db.insert(schema.project).values({
+      title: body.title,
+      slug: body.slug,
+      description: body.description || "",
+      body: body.body || "",
+      coverImage: body.coverImage || "",
+      screenshots: JSON.stringify(body.screenshots || []),
+      techStack: JSON.stringify(body.techStack || []),
+      githubUrl: body.githubUrl || "",
+      liveUrl: body.liveUrl || "",
+      featured: body.featured ? 1 : 0,
+      sortOrder: body.sortOrder || 0,
+      createdAt: now,
+      updatedAt: now,
+    });
 
-  return Response.json(
-    { id: Number(result.lastInsertRowid) },
-    { status: 201 }
-  );
+    return Response.json(
+      { id: Number(result.lastInsertRowid) },
+      { status: 201 }
+    );
+  } catch (e: any) {
+    if (e.message?.includes("UNIQUE constraint")) {
+      return Response.json({ error: "Slug already taken" }, { status: 409 });
+    }
+    throw e;
+  }
 }

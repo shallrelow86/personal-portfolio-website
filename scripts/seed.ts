@@ -23,7 +23,11 @@ async function seed() {
     VALUES (1, 'My Portfolio', 'Personal portfolio website');
   `);
 
-  const password = process.env.ADMIN_PASSWORD || "admin123";
+  const password = process.env.ADMIN_PASSWORD;
+  if (!password) {
+    console.error("ADMIN_PASSWORD environment variable is required");
+    process.exit(1);
+  }
   const hashed = await hash(password, 10);
   console.log(
     `\nAdd this to your .env.local:\nADMIN_PASSWORD_HASH=${hashed}\n`

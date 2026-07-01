@@ -30,7 +30,7 @@ export async function PUT(
   const { id } = await params;
   const body = await req.json();
 
-  await db
+  const result = await db
     .update(schema.post)
     .set({
       title: body.title,
@@ -44,6 +44,9 @@ export async function PUT(
     })
     .where(eq(schema.post.id, Number(id)));
 
+  if (result.changes === 0) {
+    return Response.json({ error: "Not found" }, { status: 404 });
+  }
   return Response.json({ ok: true });
 }
 
@@ -55,6 +58,9 @@ export async function DELETE(
   if (err) return err;
 
   const { id } = await params;
-  await db.delete(schema.post).where(eq(schema.post.id, Number(id)));
+  const result = await db.delete(schema.post).where(eq(schema.post.id, Number(id)));
+  if (result.changes === 0) {
+    return Response.json({ error: "Not found" }, { status: 404 });
+  }
   return Response.json({ ok: true });
 }
