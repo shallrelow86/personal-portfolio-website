@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth";
 import { db, schema } from "@/lib/db";
 import { desc } from "drizzle-orm";
+import { syncEmbedding } from "@/lib/sync-embedding";
 
 export async function GET() {
   const err = await requireAdmin();
@@ -27,7 +28,9 @@ export async function POST(req: Request) {
       createdAt: now,
       updatedAt: now,
     });
-    return Response.json({ id: Number(result.lastInsertRowid) }, { status: 201 });
+    const id = Number(result.lastInsertRowid);
+    syncEmbedding("bookmark", id);
+    return Response.json({ id }, { status: 201 });
   } catch (e: any) {
     if (e.message?.includes("UNIQUE")) {
       return Response.json({ error: "URL already exists" }, { status: 409 });

@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, blob } from "drizzle-orm/sqlite-core";
 
 export const profile = sqliteTable("profile", {
   id: integer("id").primaryKey(),
@@ -74,4 +74,12 @@ export const siteSettings = sqliteTable("site_settings", {
   ogImage: text("og_image").notNull().default(""),
   primaryNav: text("primary_nav").notNull().default("[]"),
   footerText: text("footer_text").notNull().default(""),
+});
+
+export const embedding = sqliteTable("embedding", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  sourceType: text("source_type").notNull(),
+  sourceId: integer("source_id").notNull(),
+  content: text("content").notNull(),
+  embedding: blob("embedding").notNull(),
 });

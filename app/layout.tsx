@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ChatWidget from "@/components/ChatWidget";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -21,6 +22,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-bg text-text-primary antialiased">
         {children}
+        <ChatWidget />
       </body>
     </html>
   );

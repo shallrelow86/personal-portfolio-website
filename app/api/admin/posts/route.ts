@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth";
 import { db, schema } from "@/lib/db";
 import { desc } from "drizzle-orm";
+import { syncEmbedding } from "@/lib/sync-embedding";
 
 export async function GET() {
   const err = await requireAdmin();
@@ -34,8 +35,11 @@ export async function POST(req: Request) {
       updatedAt: now,
     });
 
+    const id = Number(result.lastInsertRowid);
+    syncEmbedding("post", id);
+
     return Response.json(
-      { id: Number(result.lastInsertRowid) },
+      { id },
       { status: 201 }
     );
   } catch (e: any) {

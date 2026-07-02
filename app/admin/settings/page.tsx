@@ -107,6 +107,19 @@ export default function SettingsPage() {
         </form>
       </section>
 
+      <section className="mb-12">
+        <h2 className="font-display text-xl mb-6 border-b-2 border-border pb-2">AI Index</h2>
+        <p className="font-mono text-xs text-text-muted mb-4">Rebuild vector embeddings for all content. Requires DEEPSEEK_API_KEY and SILICONFLOW_API_KEY.</p>
+        <BrutalButton
+          onClick={async () => {
+            await fetch("/api/admin/rebuild-index", { method: "POST" });
+            alert("AI index rebuild started");
+          }}
+        >
+          Rebuild AI Index
+        </BrutalButton>
+      </section>
+
       <section>
         <h2 className="font-display text-xl mb-6 border-b-2 border-border pb-2">Profile</h2>
         <form onSubmit={saveProfile}>

@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth";
 import { db, schema } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { syncEmbedding, deleteEmbedding } from "@/lib/sync-embedding";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const err = await requireAdmin();
@@ -30,6 +31,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
+  syncEmbedding("bookmark", Number(id));
   return Response.json({ ok: true });
 }
 
@@ -41,5 +43,6 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
+  deleteEmbedding("bookmark", Number(id));
   return Response.json({ ok: true });
 }

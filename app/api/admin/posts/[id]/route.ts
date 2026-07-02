@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth";
 import { db, schema } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { syncEmbedding, deleteEmbedding } from "@/lib/sync-embedding";
 
 export async function GET(
   _req: Request,
@@ -47,6 +48,7 @@ export async function PUT(
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
+  syncEmbedding("post", Number(id));
   return Response.json({ ok: true });
 }
 
@@ -62,5 +64,6 @@ export async function DELETE(
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
+  deleteEmbedding("post", Number(id));
   return Response.json({ ok: true });
 }
