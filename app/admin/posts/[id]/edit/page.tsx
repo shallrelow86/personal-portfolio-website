@@ -53,27 +53,25 @@ export default function EditPostPage() {
     if (res.ok) router.push("/admin/posts");
   };
 
-  if (loading) return <p className="text-text-muted">Loading...</p>;
+  if (loading) return <p className="text-text-muted">加载中…</p>;
 
   return (
     <div>
-      <h1 className="font-display text-3xl mb-8">Edit Post</h1>
+      <h1 className="font-display text-3xl mb-8">编辑文章</h1>
       <form onSubmit={handleSubmit} className="max-w-3xl">
-        <BrutalInput label="Title" value={title} onChange={setTitle} required />
+        <BrutalInput label="标题" value={title} onChange={setTitle} required />
         <BrutalInput label="Slug" value={slug} onChange={setSlug} required />
         <div className="mb-4">
-          <span className="block font-mono text-xs uppercase tracking-wider text-text-secondary mb-1.5">Cover Image</span>
+          <span className="block font-mono text-xs tracking-wider text-text-secondary mb-1.5">封面图</span>
           <input type="file" accept="image/*" onChange={handleUpload} className="text-sm mb-1" />
-          {coverImage && <img src={coverImage} alt="" className="w-48 h-24 object-cover border-2 border-border" />}
+          {coverImage && <img src={coverImage} alt="" className="w-48 h-24 object-cover rounded-lg border border-border" />}
         </div>
-        <BrutalInput label="Body (Markdown)" value={body} onChange={setBody} multiline />
-        <BrutalInput label="Excerpt" value={excerpt} onChange={setExcerpt} multiline rows={3} />
-        <BrutalInput label="Tags" value={tags} onChange={setTags} />
-        <div className="flex gap-4 mt-8">
-          <BrutalButton type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Save Changes"}
-          </BrutalButton>
-          <BrutalButton href="/admin/posts">Cancel</BrutalButton>
+        <BrutalInput label="正文（Markdown）" value={body} onChange={setBody} multiline />
+        <BrutalInput label="摘要" value={excerpt} onChange={setExcerpt} multiline rows={3} />
+        <BrutalInput label="标签（逗号分隔）" value={tags} onChange={setTags} />
+        <div className="flex gap-3 mt-8">
+          <BrutalButton type="submit" primary disabled={saving}>{saving ? "保存中…" : "保存修改"}</BrutalButton>
+          <BrutalButton href="/admin/posts">取消</BrutalButton>
         </div>
       </form>
     </div>

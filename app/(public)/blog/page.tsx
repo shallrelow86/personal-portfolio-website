@@ -1,8 +1,9 @@
 import { Metadata } from "next";
-import Header from "@/components/Header";
 import PostCard from "@/components/PostCard";
 import { db, schema } from "@/lib/db";
-import { desc, asc, eq } from "drizzle-orm";
+import { desc, asc } from "drizzle-orm";
+import { publishedPostFilter } from "@/lib/posts";
+import { parseJsonArray } from "@/lib/json";
 import Link from "next/link";
 import type { Post } from "@/lib/api";
 
@@ -24,7 +25,7 @@ export default async function BlogPage({
       excerpt: schema.post.excerpt, tags: schema.post.tags,
       coverImage: schema.post.coverImage, publishedAt: schema.post.publishedAt,
       categoryId: schema.post.categoryId,
-    }).from(schema.post).orderBy(desc(schema.post.publishedAt)),
+    }).from(schema.post).where(publishedPostFilter).orderBy(desc(schema.post.publishedAt)),
     db.select().from(schema.category).orderBy(asc(schema.category.sortOrder)),
   ]);
 
@@ -38,7 +39,7 @@ export default async function BlogPage({
     }
   }
 
-  const posts: Post[] = filtered.map((p) => ({ ...p, tags: JSON.parse(p.tags) }));
+  const posts: Post[] = filtered.map((p) => ({ ...p, tags: parseJsonArray(p.tags) }));
 
   const map = new Map<number, Category>();
   const tree: Category[] = [];
@@ -53,7 +54,7 @@ export default async function BlogPage({
     <div key={node.id} style={{ marginLeft: depth * 12 }}>
       <Link
         href={`/blog?category=${node.slug}`}
-        className={`block py-1 text-sm hover:text-accent ${categorySlug === node.slug ? "text-accent font-medium" : "text-text-secondary"}`}
+        className={`block py-1.5 text-sm font-mono text-[0.75rem] uppercase tracking-wider hover:text-accent ${categorySlug === node.slug ? "text-accent" : "text-text-secondary"}`}
       >
         {node.name}
       </Link>
@@ -62,25 +63,25 @@ export default async function BlogPage({
   );
 
   return (
-    <>
-      <Header />
-      <div className="max-w-5xl mx-auto px-6 py-16 flex gap-10">
-        <aside className="w-48 flex-shrink-0">
-          <h3 className="font-mono text-xs uppercase tracking-wider text-text-muted mb-4">Categories</h3>
+    <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+      <p className="eyebrow mb-4">Writing</p>
+      <h1 className="font-display text-4xl md:text-5xl italic mb-12">Blog</h1>
+      <div className="flex flex-col lg:flex-row gap-12">
+        <aside className="lg:w-44 shrink-0">
+          <h3 className="font-mono text-[0.75rem] uppercase tracking-[0.15em] text-text-muted mb-4">分类</h3>
           <Link
             href="/blog"
-            className={`block py-1 text-sm hover:text-accent ${!categorySlug ? "text-accent font-medium" : "text-text-secondary"}`}
+            className={`block py-1.5 text-sm font-mono text-[0.75rem] uppercase tracking-wider hover:text-accent ${!categorySlug ? "text-accent" : "text-text-secondary"}`}
           >
-            All
+            全部
           </Link>
           {tree.map((n) => renderCat(n, 0))}
         </aside>
-        <div className="flex-1 max-w-3xl">
-          <h1 className="font-display text-4xl mb-10">Blog</h1>
+        <div className="flex-1">
           {posts.length === 0 ? (
             <p className="font-mono text-sm text-text-muted text-center py-24">暂无文章</p>
           ) : (
-            <div className="space-y-6">
+            <div className="ink-grid grid-cols-1 md:grid-cols-2">
               {posts.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
@@ -88,7 +89,7 @@ export default async function BlogPage({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

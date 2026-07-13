@@ -35,7 +35,7 @@ export async function setAuthCookie(token: string): Promise<void> {
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "strict",
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
   });
@@ -48,8 +48,20 @@ export async function clearAuthCookie(): Promise<void> {
 
 export async function verifyPassword(password: string): Promise<boolean> {
   const hash = process.env.ADMIN_PASSWORD_HASH;
-  if (!hash) return false;
+  if (!hash) {
+    console.error("ADMIN_PASSWORD_HASH is not configured. Admin login disabled.");
+    return false;
+  }
   return compare(password, hash);
+}
+
+export function ensureAuthEnv(): void {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET environment variable is required");
+  }
+  if (!process.env.ADMIN_PASSWORD_HASH) {
+    console.warn("ADMIN_PASSWORD_HASH not set; admin login will be rejected.");
+  }
 }
 
 export async function requireAdmin(): Promise<Response | null> {

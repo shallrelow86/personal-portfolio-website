@@ -59,6 +59,7 @@ export type Project = {
   slug: string;
   description: string;
   body: string;
+  aiContext?: string;
   coverImage: string;
   screenshots: string[];
   techStack: string[];

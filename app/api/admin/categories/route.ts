@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/auth";
+import { invalidateCategoryCache } from "@/lib/categories";
 import { db, schema } from "@/lib/db";
 import { asc } from "drizzle-orm";
 
@@ -23,9 +24,10 @@ export async function POST(req: Request) {
       createdAt: now,
       updatedAt: now,
     });
+    invalidateCategoryCache();
     return Response.json({ id: Number(result.lastInsertRowid) }, { status: 201 });
-  } catch (e: any) {
-    if (e.message?.includes("UNIQUE constraint")) {
+  } catch (e: unknown) {
+    if (e instanceof Error && e.message?.includes("UNIQUE constraint")) {
       return Response.json({ error: "Slug already taken" }, { status: 409 });
     }
     throw e;

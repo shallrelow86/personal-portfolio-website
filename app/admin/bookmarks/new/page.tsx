@@ -41,30 +41,26 @@ export default function NewBookmarkPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl mb-8">New Bookmark</h1>
+      <h1 className="font-display text-3xl mb-8">新建收藏</h1>
       <form onSubmit={handleSubmit} className="max-w-3xl">
-        <BrutalInput label="Title" value={title} onChange={setTitle} required />
-        <BrutalInput label="URL" value={url} onChange={setUrl} placeholder="https://" required />
-        <BrutalInput label="Description" value={description} onChange={setDescription} multiline rows={2} />
-        <BrutalInput label="Reason (Markdown)" value={reason} onChange={setReason} multiline rows={3} />
-        <BrutalInput label="Tags (comma-separated)" value={tags} onChange={setTags} />
+        <BrutalInput label="标题" value={title} onChange={setTitle} required />
+        <BrutalInput label="链接" value={url} onChange={setUrl} placeholder="https://" required />
+        <BrutalInput label="描述" value={description} onChange={setDescription} multiline rows={2} />
+        <BrutalInput label="推荐理由（Markdown）" value={reason} onChange={setReason} multiline rows={3} />
+        <BrutalInput label="标签（逗号分隔）" value={tags} onChange={setTags} />
         <label className="block mb-4">
-          <span className="block font-mono text-xs uppercase tracking-wider text-text-secondary mb-1.5">Category</span>
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full border-2 border-border bg-bg px-4 py-2.5 text-sm font-body"
-          >
-            <option value="">(none)</option>
+          <span className="block font-mono text-xs tracking-wider text-text-secondary mb-1.5">分类</span>
+          <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="brutal-input">
+            <option value="">（无）</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
         </label>
-        <BrutalInput label="Sort Order" value={sortOrder} onChange={setSortOrder} type="number" />
-        <div className="flex gap-4 mt-8">
-          <BrutalButton type="submit" disabled={saving}>{saving ? "Saving..." : "Create"}</BrutalButton>
-          <BrutalButton href="/admin/bookmarks">Cancel</BrutalButton>
+        <BrutalInput label="排序" value={sortOrder} onChange={setSortOrder} type="number" />
+        <div className="flex gap-3 mt-8">
+          <BrutalButton type="submit" primary disabled={saving}>{saving ? "保存中…" : "创建"}</BrutalButton>
+          <BrutalButton href="/admin/bookmarks">取消</BrutalButton>
         </div>
       </form>
     </div>

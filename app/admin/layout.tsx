@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import AdminShell from "@/components/AdminShell";
 
-export const metadata: Metadata = { title: "Admin" };
+export const metadata: Metadata = { title: "后台管理" };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <AdminShell>{children}</AdminShell>
+  );
 }

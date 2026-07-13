@@ -7,12 +7,11 @@ type Props = {
   type?: "button" | "submit";
   className?: string;
   disabled?: boolean;
+  primary?: boolean;
 };
 
-export default function BrutalButton({ children, href, ...props }: Props) {
-  const base =
-    "inline-block border-2 border-border px-5 py-2 font-mono text-xs uppercase tracking-wider text-text-primary hover:border-accent hover:text-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-surface";
-
+export default function BrutalButton({ children, href, primary, className = "", ...props }: Props) {
+  const base = `brutal-btn ${primary ? "brutal-btn-primary" : ""} ${className}`;
   if (href) {
     return (
       <Link href={href} className={base}>
@@ -21,7 +20,7 @@ export default function BrutalButton({ children, href, ...props }: Props) {
     );
   }
   return (
-    <button {...props} className={base}>
+    <button className={base} {...props}>
       {children}
     </button>
   );

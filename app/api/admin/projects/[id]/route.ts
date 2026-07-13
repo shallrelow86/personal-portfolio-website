@@ -39,6 +39,7 @@ export async function PUT(
       slug: body.slug,
       description: body.description,
       body: body.body || "",
+      aiContext: body.aiContext || "",
       coverImage: body.coverImage || "",
       screenshots: JSON.stringify(body.screenshots || []),
       techStack: JSON.stringify(body.techStack || []),
@@ -53,8 +54,8 @@ export async function PUT(
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
-  syncEmbedding("project", Number(id));
-  return Response.json({ ok: true });
+  const sync = await syncEmbedding("project", Number(id));
+  return Response.json({ ok: true, embeddingSynced: sync.ok, embeddingError: sync.error });
 }
 
 export async function DELETE(
@@ -69,6 +70,6 @@ export async function DELETE(
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
-  deleteEmbedding("project", Number(id));
+  await deleteEmbedding("project", Number(id));
   return Response.json({ ok: true });
 }

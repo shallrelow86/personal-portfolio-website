@@ -10,13 +10,10 @@ type Props = {
 };
 
 export default function BrutalInput({ label, multiline, rows, ...props }: Props) {
-  const base =
-    "w-full border-2 border-border bg-bg px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-colors font-body";
-
   return (
     <label className="block mb-4">
       {label && (
-        <span className="block font-mono text-xs uppercase tracking-wider text-text-secondary mb-1.5">
+        <span className="block font-mono text-xs tracking-wider text-text-secondary mb-1.5">
           {label}
         </span>
       )}
@@ -24,13 +21,13 @@ export default function BrutalInput({ label, multiline, rows, ...props }: Props)
         <textarea
           {...props}
           rows={rows || 12}
-          className={base + " resize-y"}
+          className="brutal-input resize-y"
           onChange={(e) => props.onChange(e.target.value)}
         />
       ) : (
         <input
           {...props}
-          className={base}
+          className="brutal-input"
           onChange={(e) => props.onChange(e.target.value)}
         />
       )}

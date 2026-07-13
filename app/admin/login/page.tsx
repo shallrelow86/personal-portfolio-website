@@ -35,24 +35,25 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-surface">
-      <form onSubmit={handleSubmit} className="bg-surface border border-border rounded-xl p-8 w-full max-w-sm">
-        <h1 className="text-lg font-semibold text-center mb-6">Admin Login</h1>
+    <div className="flex items-center justify-center min-h-screen bg-bg px-4">
+      <form onSubmit={handleSubmit} className="brutal-card w-full max-w-sm">
+        <h1 className="font-display text-2xl text-center mb-1">后台登录</h1>
+        <p className="text-text-muted text-xs text-center mb-6">Portfolio Admin</p>
 
         <input
           type="password" value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password" required autoFocus
-          className="w-full bg-surface border border-border rounded-lg px-4 py-2.5 text-sm placeholder:text-text-muted focus:outline-none focus:border-accent-start transition-colors mb-4"
+          placeholder="请输入密码" required autoFocus
+          className="brutal-input mb-4"
         />
 
-        {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+        {error && <p className="text-accent text-sm mb-4">{error}</p>}
 
         <button
           type="submit" disabled={loading}
-          className="w-full bg-accent-start text-surface font-medium py-2.5 rounded-lg text-sm hover:bg-accent-end transition-colors disabled:opacity-50"
+          className="brutal-btn brutal-btn-primary w-full justify-center"
         >
-          {loading ? 'Signing in...' : 'Sign In'}
+          {loading ? '登录中…' : '登录'}
         </button>
       </form>
     </div>

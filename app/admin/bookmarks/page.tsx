@@ -1,65 +1,53 @@
-"use client";
-import { useEffect, useState } from "react";
+import { db, schema } from "@/lib/db";
+import { desc } from "drizzle-orm";
 import BrutalButton from "@/components/ui/BrutalButton";
+import BrutalCard from "@/components/ui/BrutalCard";
+import DeleteButton from "@/components/admin/DeleteButton";
+import { parseJsonArray } from "@/lib/json";
 
-type Bookmark = {
-  id: number;
-  title: string;
-  url: string;
-  description: string;
-  tags: string[];
-  createdAt: number;
-};
+export const dynamic = "force-dynamic";
 
-export default function AdminBookmarksPage() {
-  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-
-  useEffect(() => {
-    fetch("/api/admin/bookmarks").then((r) => r.json()).then(setBookmarks);
-  }, []);
-
-  const handleDelete = async (id: number) => {
-    if (!confirm("Delete this bookmark?")) return;
-    await fetch(`/api/admin/bookmarks/${id}`, { method: "DELETE" });
-    setBookmarks((b) => b.filter((x) => x.id !== id));
-  };
+export default async function AdminBookmarksPage() {
+  const bookmarks = await db
+    .select()
+    .from(schema.bookmark)
+    .orderBy(desc(schema.bookmark.createdAt));
 
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-3xl">Bookmarks</h1>
-        <BrutalButton href="/admin/bookmarks/new">New Bookmark</BrutalButton>
+        <div>
+          <h1 className="font-display text-3xl mb-1">收藏</h1>
+          <p className="text-text-muted text-sm">收藏的网站与外链</p>
+        </div>
+        <BrutalButton href="/admin/bookmarks/new" primary>新建收藏</BrutalButton>
       </div>
       {bookmarks.length === 0 ? (
-        <p className="text-text-muted">No bookmarks yet.</p>
+        <BrutalCard><p className="text-text-muted text-sm">还没有收藏。</p></BrutalCard>
       ) : (
-        <table className="w-full font-mono text-sm">
-          <thead>
-            <tr className="border-b-2 border-border text-left text-text-muted">
-              <th className="pb-3 pr-4">Title</th>
-              <th className="pb-3 pr-4">URL</th>
-              <th className="pb-3 pr-4">Tags</th>
-              <th className="pb-3 pr-4">Date</th>
-              <th className="pb-3"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookmarks.map((b) => (
-              <tr key={b.id} className="border-b border-border">
-                <td className="py-3 pr-4 font-medium">{b.title}</td>
-                <td className="py-3 pr-4 text-text-muted truncate max-w-xs">{b.url}</td>
-                <td className="py-3 pr-4 text-text-muted">{b.tags.join(", ")}</td>
-                <td className="py-3 pr-4 text-text-muted">
-                  {new Date(b.createdAt).toLocaleDateString("zh-CN")}
-                </td>
-                <td className="py-3 text-right space-x-2">
-                  <a href={`/admin/bookmarks/${b.id}/edit`} className="hover:text-accent">Edit</a>
-                  <button onClick={() => handleDelete(b.id)} className="hover:text-accent text-text-muted">Del</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="grid gap-3 md:grid-cols-2">
+          {bookmarks.map((b) => {
+            const tags = parseJsonArray(b.tags);
+            return (
+              <BrutalCard key={b.id}>
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <a href={b.url} target="_blank" rel="noreferrer" className="font-medium hover:text-accent">
+                    {b.title}
+                  </a>
+                  <div className="flex gap-2 text-xs shrink-0">
+                    <a href={`/admin/bookmarks/${b.id}/edit`} className="text-text-secondary hover:text-accent">编辑</a>
+                    <DeleteButton endpoint="/api/admin/bookmarks" id={b.id} confirm="确认删除这个收藏？" />
+                  </div>
+                </div>
+                <p className="text-text-muted text-xs font-mono truncate mb-2">{b.url}</p>
+                {b.description && <p className="text-text-secondary text-sm mb-2 line-clamp-2">{b.description}</p>}
+                <div className="flex flex-wrap gap-1.5">
+                  {tags.map((t) => <span key={t} className="brutal-tag">{t}</span>)}
+                </div>
+              </BrutalCard>
+            );
+          })}
+        </div>
       )}
     </div>
   );

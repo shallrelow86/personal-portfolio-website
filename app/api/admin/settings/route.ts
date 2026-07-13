@@ -1,14 +1,16 @@
 import { requireAdmin } from "@/lib/auth";
 import { db, schema } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { parseJsonField } from "@/lib/json";
 
 export async function GET() {
+  const err = await requireAdmin();
+  if (err) return err;
   const settings = await db.select().from(schema.siteSettings).get();
-  if (!settings)
-    return Response.json({ error: "Not found" }, { status: 404 });
+  if (!settings) return Response.json({ error: "Not found" }, { status: 404 });
   return Response.json({
     ...settings,
-    primaryNav: JSON.parse(settings.primaryNav),
+    primaryNav: parseJsonField<{ label: string; url: string }[]>(settings.primaryNav, []),
   });
 }
 

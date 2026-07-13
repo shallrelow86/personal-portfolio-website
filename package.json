@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:setup": "node scripts/setup.cjs",
+    "db:rebuild": "npx tsx scripts/rebuild-embeddings.ts",
+    "db:verify": "node scripts/verify-db.cjs",
+    "e2e:chat": "node scripts/e2e-chat.cjs",
+    "ppt:generate": "node scripts/generate-presentation.cjs"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -35,6 +40,7 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "pptxgenjs": "^4.0.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

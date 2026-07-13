@@ -5,11 +5,5 @@ export default function BrutalCard({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <div
-      className={`border-2 border-border bg-surface p-6 hover:border-accent transition-colors ${className}`}
-    >
-      {children}
-    </div>
-  );
+  return <div className={`brutal-card ${className}`}>{children}</div>;
 }

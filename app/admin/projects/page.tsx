@@ -1,59 +1,56 @@
-"use client";
-import { useEffect, useState } from "react";
+import { db, schema } from "@/lib/db";
+import { asc } from "drizzle-orm";
 import BrutalButton from "@/components/ui/BrutalButton";
+import BrutalCard from "@/components/ui/BrutalCard";
+import DeleteButton from "@/components/admin/DeleteButton";
 
-type Project = {
-  id: number;
-  title: string;
-  slug: string;
-  featured: number;
-};
+export const dynamic = "force-dynamic";
 
-export default function AdminProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
-
-  useEffect(() => {
-    fetch("/api/admin/projects").then((r) => r.json()).then(setProjects);
-  }, []);
-
-  const handleDelete = async (id: number) => {
-    if (!confirm("Delete this project?")) return;
-    await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
-    setProjects((p) => p.filter((x) => x.id !== id));
-  };
+export default async function AdminProjectsPage() {
+  const projects = await db
+    .select()
+    .from(schema.project)
+    .orderBy(asc(schema.project.sortOrder));
 
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-3xl">Projects</h1>
-        <BrutalButton href="/admin/projects/new">New Project</BrutalButton>
+        <div>
+          <h1 className="font-display text-3xl mb-1">项目</h1>
+          <p className="text-text-muted text-sm">管理作品集项目</p>
+        </div>
+        <BrutalButton href="/admin/projects/new" primary>新建项目</BrutalButton>
       </div>
       {projects.length === 0 ? (
-        <p className="text-text-muted">No projects yet.</p>
+        <BrutalCard><p className="text-text-muted text-sm">还没有项目。</p></BrutalCard>
       ) : (
-        <table className="w-full font-mono text-sm">
-          <thead>
-            <tr className="border-b-2 border-border text-left text-text-muted">
-              <th className="pb-3 pr-4">Title</th>
-              <th className="pb-3 pr-4">Slug</th>
-              <th className="pb-3 pr-4">Featured</th>
-              <th className="pb-3"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {projects.map((p) => (
-              <tr key={p.id} className="border-b border-border">
-                <td className="py-3 pr-4 font-medium">{p.title}</td>
-                <td className="py-3 pr-4 text-text-muted">{p.slug}</td>
-                <td className="py-3 pr-4 text-text-muted">{p.featured ? "Yes" : "No"}</td>
-                <td className="py-3 text-right space-x-2">
-                  <a href={`/admin/projects/${p.id}/edit`} className="hover:text-accent">Edit</a>
-                  <button onClick={() => handleDelete(p.id)} className="hover:text-accent text-text-muted">Del</button>
-                </td>
+        <div className="brutal-card !p-0 overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-text-muted text-xs tracking-wider">
+                <th className="p-4 font-medium">项目名称</th>
+                <th className="p-4 font-medium">Slug</th>
+                <th className="p-4 font-medium">推荐</th>
+                <th className="p-4 font-medium text-right">操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {projects.map((p) => (
+                <tr key={p.id} className="border-b border-border last:border-0 hover:bg-surface-2 transition-colors">
+                  <td className="p-4 font-medium">{p.title}</td>
+                  <td className="p-4 text-text-muted font-mono text-xs">{p.slug}</td>
+                  <td className="p-4">
+                    {p.featured ? <span className="brutal-tag !text-accent !border-accent/30">推荐</span> : <span className="text-text-muted text-xs">—</span>}
+                  </td>
+                  <td className="p-4 text-right space-x-3">
+                    <a href={`/admin/projects/${p.id}/edit`} className="text-text-secondary hover:text-accent">编辑</a>
+                    <DeleteButton endpoint="/api/admin/projects" id={p.id} confirm="确认删除这个项目？" />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

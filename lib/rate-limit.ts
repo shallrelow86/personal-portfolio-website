@@ -1,3 +1,4 @@
+// 单实例依赖：ecosystem.config.cjs 必须保持 exec_mode: "fork", instances: 1。改 cluster 前须换共享存储。
 const buckets = new Map<string, { count: number; resetAt: number }>();
 
 function sweep() {

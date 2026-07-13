@@ -41,6 +41,8 @@ export async function PUT(
       tags: JSON.stringify(body.tags || []),
       coverImage: body.coverImage || "",
       publishedAt: body.publishedAt,
+      categoryId: body.categoryId ?? undefined,
+      status: body.status ?? undefined,
       updatedAt: Date.now(),
     })
     .where(eq(schema.post.id, Number(id)));
@@ -48,8 +50,8 @@ export async function PUT(
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
-  syncEmbedding("post", Number(id));
-  return Response.json({ ok: true });
+  const sync = await syncEmbedding("post", Number(id));
+  return Response.json({ ok: true, embeddingSynced: sync.ok, embeddingError: sync.error });
 }
 
 export async function DELETE(
@@ -64,6 +66,6 @@ export async function DELETE(
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
-  deleteEmbedding("post", Number(id));
+  await deleteEmbedding("post", Number(id));
   return Response.json({ ok: true });
 }

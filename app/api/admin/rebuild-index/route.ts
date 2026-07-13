@@ -4,6 +4,6 @@ import { rebuildAllEmbeddings } from "@/lib/sync-embedding";
 export async function POST() {
   const err = await requireAdmin();
   if (err) return err;
-  rebuildAllEmbeddings();
-  return Response.json({ ok: true });
+  const result = await rebuildAllEmbeddings();
+  return Response.json({ ok: true, ...result });
 }

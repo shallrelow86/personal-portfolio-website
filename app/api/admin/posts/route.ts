@@ -31,19 +31,21 @@ export async function POST(req: Request) {
       tags: JSON.stringify(body.tags || []),
       coverImage: body.coverImage || "",
       publishedAt: body.publishedAt || now,
+      categoryId: body.categoryId || null,
+      status: body.status || "published",
       createdAt: now,
       updatedAt: now,
     });
 
     const id = Number(result.lastInsertRowid);
-    syncEmbedding("post", id);
+    const sync = await syncEmbedding("post", id);
 
     return Response.json(
-      { id },
+      { id, embeddingSynced: sync.ok, embeddingError: sync.error },
       { status: 201 }
     );
-  } catch (e: any) {
-    if (e.message?.includes("UNIQUE constraint")) {
+  } catch (e: unknown) {
+    if (e instanceof Error && e.message?.includes("UNIQUE constraint")) {
       return Response.json({ error: "Slug already taken" }, { status: 409 });
     }
     throw e;

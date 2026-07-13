@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       slug: body.slug,
       description: body.description || "",
       body: body.body || "",
+      aiContext: body.aiContext || "",
       coverImage: body.coverImage || "",
       screenshots: JSON.stringify(body.screenshots || []),
       techStack: JSON.stringify(body.techStack || []),
@@ -40,14 +41,14 @@ export async function POST(req: Request) {
     });
 
     const id = Number(result.lastInsertRowid);
-    syncEmbedding("project", id);
+    const sync = await syncEmbedding("project", id);
 
     return Response.json(
-      { id },
+      { id, embeddingSynced: sync.ok, embeddingError: sync.error },
       { status: 201 }
     );
-  } catch (e: any) {
-    if (e.message?.includes("UNIQUE constraint")) {
+  } catch (e: unknown) {
+    if (e instanceof Error && e.message?.includes("UNIQUE constraint")) {
       return Response.json({ error: "Slug already taken" }, { status: 409 });
     }
     throw e;

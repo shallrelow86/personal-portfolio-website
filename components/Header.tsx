@@ -1,26 +1,17 @@
 import Link from "next/link";
-import { fetchApi, type Settings } from "@/lib/api";
+import { fetchSettings } from "@/lib/settings";
+import HeaderNav from "@/components/HeaderNav";
 
 export default async function Header() {
-  const settings = await fetchApi<Settings>("/api/admin/settings");
+  const settings = await fetchSettings();
 
   return (
-    <header className="sticky top-0 z-50 bg-bg border-b-2 border-border">
-      <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="font-display text-xl hover:text-accent transition-colors">
+    <header className="sticky top-0 z-50 bg-bg/85 backdrop-blur-md border-b border-border">
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between gap-6">
+        <Link href="/" className="font-display text-xl italic tracking-tight hover:text-accent transition-colors shrink-0">
           {settings?.siteTitle || "Portfolio"}
         </Link>
-        <nav className="flex gap-6">
-          {(settings?.primaryNav || []).map((item) => (
-            <Link
-              key={item.url}
-              href={item.url}
-              className="font-mono text-xs uppercase tracking-wider text-text-secondary hover:text-accent transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <HeaderNav />
       </div>
     </header>
   );

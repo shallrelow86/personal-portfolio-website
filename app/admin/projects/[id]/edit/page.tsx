@@ -11,6 +11,7 @@ export default function EditProjectPage() {
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [body, setBody] = useState("");
+  const [aiContext, setAiContext] = useState("");
   const [techStack, setTechStack] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [liveUrl, setLiveUrl] = useState("");
@@ -29,6 +30,7 @@ export default function EditProjectPage() {
         setSlug(p.slug);
         setDescription(p.description);
         setBody(p.body);
+        setAiContext(p.aiContext || "");
         setCoverImage(p.coverImage);
         setGithubUrl(p.githubUrl);
         setLiveUrl(p.liveUrl);
@@ -40,14 +42,36 @@ export default function EditProjectPage() {
       });
   }, [params.id]);
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const uploadFile = async (file: File) => {
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
     const data = await res.json();
-    if (data.url) setCoverImage(data.url);
+    return data.url as string | undefined;
+  };
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadFile(file);
+    if (url) setCoverImage(url);
+    e.target.value = "";
+  };
+
+  const handleScreenshotsUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const urls: string[] = [];
+    for (const file of files) {
+      const url = await uploadFile(file);
+      if (url) urls.push(url);
+    }
+    if (urls.length) setScreenshots((prev) => [...prev, ...urls]);
+    e.target.value = "";
+  };
+
+  const removeScreenshot = (idx: number) => {
+    setScreenshots((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,58 +81,74 @@ export default function EditProjectPage() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title,
-        slug,
-        description,
-        body,
-        coverImage,
-        screenshots,
+        title, slug, description, body, aiContext, coverImage, screenshots,
         techStack: techStack.split(",").map((t) => t.trim()).filter(Boolean),
-        githubUrl,
-        liveUrl,
-        featured,
+        githubUrl, liveUrl, featured,
         sortOrder: Number(sortOrder) || 0,
       }),
     });
     if (res.ok) router.push("/admin/projects");
+    else setSaving(false);
   };
 
-  if (loading) return <p className="text-text-muted">Loading...</p>;
+  if (loading) return <p className="text-text-muted">加载中…</p>;
 
   return (
     <div>
-      <h1 className="font-display text-3xl mb-8">Edit Project</h1>
+      <h1 className="font-display text-3xl mb-8">编辑项目</h1>
       <form onSubmit={handleSubmit} className="max-w-3xl">
-        <BrutalInput label="Title" value={title} onChange={setTitle} required />
+        <BrutalInput label="项目名称" value={title} onChange={setTitle} required />
         <BrutalInput label="Slug" value={slug} onChange={setSlug} required />
         <div className="mb-4">
-          <span className="block font-mono text-xs uppercase tracking-wider text-text-secondary mb-1.5">Cover Image</span>
-          <input type="file" accept="image/*" onChange={handleUpload} className="text-sm mb-1" />
-          {coverImage && <img src={coverImage} alt="" className="w-48 h-24 object-cover border-2 border-border" />}
+          <span className="block font-mono text-xs tracking-wider text-text-secondary mb-1.5">封面图</span>
+          <input type="file" accept="image/*" onChange={handleCoverUpload} className="text-sm mb-1" />
+          {coverImage && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={coverImage} alt="" className="w-48 h-24 object-cover rounded-lg border border-border" />
+          )}
         </div>
-        {screenshots.length > 0 && (
-          <div className="mb-4">
-            <span className="block font-mono text-xs uppercase tracking-wider text-text-secondary mb-1.5">Screenshots</span>
+        <div className="mb-4">
+          <span className="block font-mono text-xs tracking-wider text-text-secondary mb-1.5">运行截图（可多选）</span>
+          <input type="file" accept="image/*" multiple onChange={handleScreenshotsUpload} className="text-sm mb-2" />
+          {screenshots.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {screenshots.map((url, i) => (
-                <img key={i} src={url} alt="" className="w-32 h-20 object-cover border-2 border-border" />
+                <div key={`${url}-${i}`} className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={url} alt="" className="w-32 h-20 object-cover rounded-lg border border-border" />
+                  <button
+                    type="button"
+                    onClick={() => removeScreenshot(i)}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-ink text-bg text-xs rounded-full cursor-pointer"
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
             </div>
-          </div>
-        )}
-        <BrutalInput label="Description" value={description} onChange={setDescription} required />
-        <BrutalInput label="Body (Markdown)" value={body} onChange={setBody} multiline />
-        <BrutalInput label="Tech Stack" value={techStack} onChange={setTechStack} />
-        <BrutalInput label="GitHub URL" value={githubUrl} onChange={setGithubUrl} />
-        <BrutalInput label="Live URL" value={liveUrl} onChange={setLiveUrl} />
-        <label className="flex items-center gap-2 mb-4 font-mono text-sm">
+          )}
+        </div>
+        <BrutalInput label="简述" value={description} onChange={setDescription} required />
+        <BrutalInput label="正文（Markdown）" value={body} onChange={setBody} multiline />
+        <BrutalInput
+          label="AI 资料（给前台助手检索用，可写别名、功能说明等）"
+          value={aiContext}
+          onChange={setAiContext}
+          multiline
+          rows={6}
+          placeholder="例：别名「瞎掰王」；这是一款……"
+        />
+        <BrutalInput label="技术栈" value={techStack} onChange={setTechStack} />
+        <BrutalInput label="GitHub 链接" value={githubUrl} onChange={setGithubUrl} />
+        <BrutalInput label="在线演示" value={liveUrl} onChange={setLiveUrl} />
+        <label className="flex items-center gap-2 mb-4 text-sm">
           <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
-          Featured
+          推荐项目
         </label>
-        <BrutalInput label="Sort Order" value={sortOrder} onChange={setSortOrder} type="number" />
-        <div className="flex gap-4 mt-8">
-          <BrutalButton type="submit" disabled={saving}>{saving ? "Saving..." : "Save Changes"}</BrutalButton>
-          <BrutalButton href="/admin/projects">Cancel</BrutalButton>
+        <BrutalInput label="排序" value={sortOrder} onChange={setSortOrder} type="number" />
+        <div className="flex gap-3 mt-8">
+          <BrutalButton type="submit" primary disabled={saving}>{saving ? "保存中…" : "保存修改"}</BrutalButton>
+          <BrutalButton href="/admin/projects">取消</BrutalButton>
         </div>
       </form>
     </div>

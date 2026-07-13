@@ -19,23 +19,23 @@ export default function ProjectCardList({ projects }: { projects: Project[] }) {
           <button
             type="button"
             onClick={() => setFilter(null)}
-            className={`brutal-tag cursor-pointer ${!filter ? "bg-accent text-bg border-accent" : "hover:border-accent"}`}
+            className={`ink-pill cursor-pointer transition-colors ${!filter ? "bg-ink text-white border-ink" : "hover:border-accent hover:text-accent"}`}
           >
-            All
+            全部
           </button>
           {allTechs.map((tech) => (
             <button
               key={tech}
               type="button"
               onClick={() => setFilter(tech)}
-              className={`brutal-tag cursor-pointer ${filter === tech ? "bg-accent text-bg border-accent" : "hover:border-accent"}`}
+              className={`ink-pill cursor-pointer transition-colors ${filter === tech ? "bg-accent text-white border-accent" : "hover:border-accent hover:text-accent"}`}
             >
               {tech}
             </button>
           ))}
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="ink-grid grid-cols-1 md:grid-cols-2">
         {filtered.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}

@@ -1,5 +1,7 @@
 import { db, schema } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
+import { publishedPostFilter } from "@/lib/posts";
+import { parseJsonArray } from "@/lib/json";
 
 export async function GET(
   _req: Request,
@@ -9,12 +11,12 @@ export async function GET(
   const post = await db
     .select()
     .from(schema.post)
-    .where(eq(schema.post.slug, slug))
+    .where(and(eq(schema.post.slug, slug), publishedPostFilter))
     .get();
 
   if (!post) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
 
-  return Response.json({ ...post, tags: JSON.parse(post.tags) });
+  return Response.json({ ...post, tags: parseJsonArray(post.tags) });
 }

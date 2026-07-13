@@ -1,136 +1,126 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-
-type Message = { role: "user" | "ai"; text: string };
+import { motion, AnimatePresence } from "motion/react";
+import { useChatStream } from "@/hooks/useChatStream";
 
 export default function ChatWidget() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const { messages, input, setInput, loading, send, bottomRef } = useChatStream("/api/chat/public");
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const handler = () => setOpen(true);
+    document.addEventListener("open-chat", handler);
+    const btn = (e: Event) => {
+      const t = e.target as HTMLElement;
+      if (t.closest("[data-open-chat]")) {
+        e.preventDefault();
+        setOpen(true);
+      }
+    };
+    document.addEventListener("click", btn);
+    return () => {
+      document.removeEventListener("open-chat", handler);
+      document.removeEventListener("click", btn);
+    };
+  }, []);
 
   if (pathname.startsWith("/admin")) return null;
 
-  const send = async () => {
-    const text = input.trim();
-    if (!text || loading) return;
-    setInput("");
-    setMessages((m) => [...m, { role: "user", text }]);
-    setLoading(true);
-
-    let aiText = "";
-    setMessages((m) => [...m, { role: "ai", text: "" }]);
-
-    try {
-      const res = await fetch("/api/chat/public", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Request failed" }));
-        setMessages((m) => {
-          const copy = [...m];
-          copy[copy.length - 1] = { role: "ai", text: err.error || "请求失败" };
-          return copy;
-        });
-        setLoading(false);
-        return;
-      }
-
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        for (const line of chunk.split("\n")) {
-          if (!line.startsWith("data: ")) continue;
-          const data = line.slice(6);
-          if (data === "[DONE]") break;
-          try {
-            const json = JSON.parse(data);
-            if (json.token) {
-              aiText += json.token;
-              setMessages((m) => {
-                const copy = [...m];
-                copy[copy.length - 1] = { role: "ai", text: aiText };
-                return copy;
-              });
-            }
-          } catch {}
-        }
-      }
-    } catch {
-      setMessages((m) => {
-        const copy = [...m];
-        copy[copy.length - 1] = { role: "ai", text: "连接失败，请稍后重试" };
-        return copy;
-      });
-    }
-    setLoading(false);
-  };
-
   return (
     <>
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 brutal-tag bg-surface border-2 border-border px-4 py-2 font-mono text-xs uppercase tracking-wider hover:border-accent hover:text-accent transition-colors cursor-pointer shadow-lg"
-        >
-          问问 AI
-        </button>
-      )}
-      {open && (
-        <div className="fixed top-0 right-0 z-50 w-[300px] h-full border-l-2 border-border bg-bg flex flex-col shadow-2xl">
-          <div className="flex items-center justify-between border-b-2 border-border px-4 py-3">
-            <span className="font-mono text-xs uppercase tracking-wider">AI 助手</span>
-            <button onClick={() => setOpen(false)} className="font-mono text-xs text-text-muted hover:text-accent">✕</button>
-          </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {messages.length === 0 && (
-              <p className="font-mono text-xs text-text-muted">有什么想了解的？</p>
-            )}
-            {messages.map((m, i) => (
-              <div
-                key={i}
-                className={`border-2 border-border p-3 text-sm ${
-                  m.role === "user" ? "bg-surface font-mono ml-4" : "bg-bg mr-4"
-                }`}
-              >
-                {m.text || (loading && i === messages.length - 1 ? "..." : "")}
+      <AnimatePresence>
+        {!open && (
+          <motion.button
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 28 }}
+            onClick={() => setOpen(true)}
+            className="fixed bottom-8 right-6 z-50 w-12 h-12 rounded-[var(--radius-sm)] bg-ink text-bg border border-ink hover:bg-accent hover:border-accent transition-colors cursor-pointer flex items-center justify-center font-mono text-[0.75rem] uppercase tracking-wider shadow-[0_8px_24px_-8px_rgba(12,12,11,0.35)]"
+            aria-label="打开 AI 助手"
+          >
+            AI
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed bottom-8 right-6 z-50 w-[min(380px,calc(100vw-2rem))] h-[min(520px,calc(100vh-6rem))] rounded-[var(--radius-md)] bg-surface border border-border shadow-[0_24px_64px_-16px_rgba(12,12,11,0.2)] flex flex-col overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-bg/50">
+              <div>
+                <p className="font-display text-lg italic">AI 助手</p>
+                <p className="font-mono text-[0.75rem] uppercase tracking-[0.15em] text-text-muted">知识库问答</p>
               </div>
-            ))}
-            <div ref={bottomRef} />
-          </div>
-          <div className="border-t-2 border-border p-3 flex gap-2">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && send()}
-              placeholder="输入问题..."
-              disabled={loading}
-              className="flex-1 border-2 border-border bg-bg px-3 py-2 text-sm font-mono focus:outline-none focus:border-accent"
-            />
-            <button
-              onClick={send}
-              disabled={loading}
-              className="border-2 border-border px-3 py-2 font-mono text-xs uppercase hover:border-accent hover:text-accent disabled:opacity-40 cursor-pointer"
-            >
-              发送
-            </button>
-          </div>
-        </div>
-      )}
+              <button
+                onClick={() => setOpen(false)}
+                className="w-8 h-8 rounded-[var(--radius-sm)] border border-border flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-colors cursor-pointer"
+                aria-label="关闭"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+              {messages.length === 0 && (
+                <p className="font-mono text-xs text-text-muted text-center py-8">有什么想了解的？</p>
+              )}
+              {messages.map((m, idx) => (
+                <div
+                  key={m.id}
+                  className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[85%] px-4 py-2.5 text-sm leading-relaxed rounded-[var(--radius-sm)] ${
+                      m.role === "user"
+                        ? "bg-ink text-bg"
+                        : "bg-surface-2 text-text-secondary"
+                    }`}
+                  >
+                    {m.text || (loading && idx === messages.length - 1 ? (
+                      <span className="inline-flex gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-text-muted animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-text-muted animate-pulse [animation-delay:150ms]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-text-muted animate-pulse [animation-delay:300ms]" />
+                      </span>
+                    ) : "")}
+                  </div>
+                </div>
+              ))}
+              <div ref={bottomRef} />
+            </div>
+
+            <div className="p-4 border-t border-border bg-bg/30">
+              <div className="flex gap-2 items-stretch">
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
+                  placeholder="输入问题..."
+                  disabled={loading}
+                  className="flex-1 brutal-input !py-0 h-10 text-sm"
+                />
+                <button
+                  onClick={send}
+                  disabled={loading || !input.trim()}
+                  className="w-10 h-10 rounded-[var(--radius-sm)] bg-ink text-white flex items-center justify-center hover:bg-accent disabled:opacity-40 transition-colors cursor-pointer shrink-0"
+                  aria-label="发送"
+                >
+                  →
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

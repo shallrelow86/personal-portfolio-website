@@ -1,5 +1,6 @@
 import { db, schema } from "@/lib/db";
 import { asc } from "drizzle-orm";
+import { parseJsonArray } from "@/lib/json";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -17,8 +18,8 @@ export async function GET(req: Request) {
   return Response.json(
     projects.map((p) => ({
       ...p,
-      techStack: JSON.parse(p.techStack),
-      screenshots: JSON.parse(p.screenshots),
+      techStack: parseJsonArray(p.techStack),
+      screenshots: parseJsonArray(p.screenshots),
       featured: Boolean(p.featured),
     }))
   );

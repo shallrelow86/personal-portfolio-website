@@ -42,6 +42,7 @@ export const project = sqliteTable("project", {
   slug: text("slug").notNull().unique(),
   description: text("description").notNull().default(""),
   body: text("body").notNull().default(""),
+  aiContext: text("ai_context").notNull().default(""),
   coverImage: text("cover_image").notNull().default(""),
   screenshots: text("screenshots").notNull().default("[]"),
   techStack: text("tech_stack").notNull().default("[]"),
@@ -82,4 +83,21 @@ export const embedding = sqliteTable("embedding", {
   sourceId: integer("source_id").notNull(),
   content: text("content").notNull(),
   embedding: blob("embedding").notNull(),
+});
+
+export const conversation = sqliteTable("conversation", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull().default("新对话"),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const message = sqliteTable("message", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  conversationId: integer("conversation_id")
+    .notNull()
+    .references(() => conversation.id, { onDelete: "cascade" }),
+  role: text("role").notNull(),
+  content: text("content").notNull(),
+  createdAt: integer("created_at").notNull(),
 });

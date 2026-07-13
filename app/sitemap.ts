@@ -1,10 +1,11 @@
 import { db, schema } from "@/lib/db";
+import { publishedPostFilter } from "@/lib/posts";
 import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const BASE = process.env.SITE_URL || "https://your-domain.com";
   const [posts, projects] = await Promise.all([
-    db.select({ slug: schema.post.slug }).from(schema.post),
+    db.select({ slug: schema.post.slug }).from(schema.post).where(publishedPostFilter),
     db.select({ slug: schema.project.slug }).from(schema.project),
   ]);
   return [

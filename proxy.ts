@@ -1,41 +1,36 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only protect /admin routes, but allow /admin/login to load
-  if (!pathname.startsWith('/admin') || pathname === '/admin/login') {
+  if (pathname === "/admin/login") {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get('admin_token')?.value;
-  const password = process.env.ADMIN_PASSWORD;
-
-  if (!password) {
-    return new NextResponse('ADMIN_PASSWORD not configured.', { status: 500 });
-  }
-
+  const token = request.cookies.get("admin_token")?.value;
   if (!token) {
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
-  // Use Web Crypto API (available in Edge Runtime) to verify the cookie
-  return verifyToken(token, password).then((valid) => {
-    if (valid) return NextResponse.next();
-    return NextResponse.redirect(new URL('/admin/login', request.url));
-  });
+  const valid = await verifyJwt(token);
+  if (!valid) {
+    return NextResponse.redirect(new URL("/admin/login", request.url));
+  }
+  return NextResponse.next();
 }
 
-async function verifyToken(token: string, password: string): Promise<boolean> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashHex = Array.from(new Uint8Array(hashBuffer))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-  return token === hashHex;
+async function verifyJwt(token: string): Promise<boolean> {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) return false;
+  try {
+    await jwtVerify(token, new TextEncoder().encode(secret));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export const config = {
-  matcher: '/admin/:path*',
+  matcher: "/admin/:path*",
 };

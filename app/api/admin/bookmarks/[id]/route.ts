@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/auth";
 import { db, schema } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { syncEmbedding, deleteEmbedding } from "@/lib/sync-embedding";
+import { parseJsonArray } from "@/lib/json";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const err = await requireAdmin();
@@ -9,7 +10,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const { id } = await params;
   const bookmark = await db.select().from(schema.bookmark).where(eq(schema.bookmark.id, Number(id))).get();
   if (!bookmark) return Response.json({ error: "Not found" }, { status: 404 });
-  return Response.json({ ...bookmark, tags: JSON.parse(bookmark.tags) });
+  return Response.json({ ...bookmark, tags: parseJsonArray(bookmark.tags) });
 }
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -31,7 +32,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
-  syncEmbedding("bookmark", Number(id));
+  await syncEmbedding("bookmark", Number(id));
   return Response.json({ ok: true });
 }
 
@@ -43,6 +44,6 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   if (result.changes === 0) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
-  deleteEmbedding("bookmark", Number(id));
+  await deleteEmbedding("bookmark", Number(id));
   return Response.json({ ok: true });
 }

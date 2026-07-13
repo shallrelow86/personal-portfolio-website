@@ -1,7 +1,7 @@
 import { Metadata } from "next";
-import Header from "@/components/Header";
+import Image from "next/image";
 import { db, schema } from "@/lib/db";
-import { desc, asc, eq } from "drizzle-orm";
+import { desc, asc } from "drizzle-orm";
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "Bookmarks" };
@@ -44,7 +44,7 @@ export default async function BookmarksPage({
     <div key={node.id} style={{ marginLeft: depth * 12 }}>
       <Link
         href={`/bookmarks?category=${node.slug}`}
-        className={`block py-1 text-sm hover:text-accent ${categorySlug === node.slug ? "text-accent font-medium" : "text-text-secondary"}`}
+        className={`block py-1.5 text-sm font-mono text-[0.75rem] uppercase tracking-wider hover:text-accent ${categorySlug === node.slug ? "text-accent" : "text-text-secondary"}`}
       >
         {node.name}
       </Link>
@@ -53,25 +53,25 @@ export default async function BookmarksPage({
   );
 
   return (
-    <>
-      <Header />
-      <div className="max-w-5xl mx-auto px-6 py-16 flex gap-10">
-        <aside className="w-48 flex-shrink-0">
-          <h3 className="font-mono text-xs uppercase tracking-wider text-text-muted mb-4">Categories</h3>
+    <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+      <p className="eyebrow mb-4">Reading List</p>
+      <h1 className="font-display text-4xl md:text-5xl italic mb-12">Bookmarks</h1>
+      <div className="flex flex-col lg:flex-row gap-12">
+        <aside className="lg:w-44 shrink-0">
+          <h3 className="font-mono text-[0.75rem] uppercase tracking-[0.15em] text-text-muted mb-4">分类</h3>
           <Link
             href="/bookmarks"
-            className={`block py-1 text-sm hover:text-accent ${!categorySlug ? "text-accent font-medium" : "text-text-secondary"}`}
+            className={`block py-1.5 text-sm font-mono text-[0.75rem] uppercase tracking-wider hover:text-accent ${!categorySlug ? "text-accent" : "text-text-secondary"}`}
           >
-            All
+            全部
           </Link>
           {tree.map((n) => renderCat(n, 0))}
         </aside>
         <div className="flex-1">
-          <h1 className="font-display text-4xl mb-10">Bookmarks</h1>
           {bookmarks.length === 0 ? (
             <p className="font-mono text-sm text-text-muted text-center py-24">暂无收藏</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="ink-grid grid-cols-1 md:grid-cols-2">
               {bookmarks.map((b) => {
                 const tags: string[] = JSON.parse(b.tags);
                 const favicon = b.favicon || `https://www.google.com/s2/favicons?domain=${safeHostname(b.url)}&sz=64`;
@@ -81,19 +81,28 @@ export default async function BookmarksPage({
                     href={b.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block border-2 border-border bg-surface p-5 hover:border-accent transition-colors"
+                    className="group block p-6 md:p-8 hover:bg-surface-2/60 transition-colors"
                   >
-                    <div className="flex items-start gap-3 mb-2">
-                      <img src={favicon} alt="" width={20} height={20} className="mt-1 flex-shrink-0" />
-                      <h3 className="font-display text-lg leading-tight">{b.title}</h3>
+                    <div className="flex items-start gap-3 mb-3">
+                      <Image
+                        src={favicon}
+                        alt=""
+                        width={20}
+                        height={20}
+                        unoptimized
+                        className="mt-1 shrink-0"
+                      />
+                      <h3 className="font-display text-lg italic group-hover:text-accent transition-colors leading-tight">
+                        {b.title}
+                      </h3>
                     </div>
                     {b.description && (
-                      <p className="text-sm text-text-secondary mb-3">{b.description}</p>
+                      <p className="text-sm text-text-secondary mb-3 leading-relaxed">{b.description}</p>
                     )}
                     {tags.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-2">
                         {tags.map((t) => (
-                          <span key={t} className="brutal-tag">{t}</span>
+                          <span key={t} className="ink-pill">{t}</span>
                         ))}
                       </div>
                     )}
@@ -107,7 +116,7 @@ export default async function BookmarksPage({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

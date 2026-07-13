@@ -1,16 +1,15 @@
 import { requireAdmin } from "@/lib/auth";
+import { fetchProfile } from "@/lib/profile";
 import { db, schema } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { syncEmbedding } from "@/lib/sync-embedding";
 
 export async function GET() {
-  const profile = await db.select().from(schema.profile).get();
-  if (!profile)
-    return Response.json({ error: "Not found" }, { status: 404 });
-  return Response.json({
-    ...profile,
-    skills: JSON.parse(profile.skills),
-    socialLinks: JSON.parse(profile.socialLinks),
-  });
+  const err = await requireAdmin();
+  if (err) return err;
+  const profile = await fetchProfile();
+  if (!profile) return Response.json({ error: "Not found" }, { status: 404 });
+  return Response.json(profile);
 }
 
 export async function PUT(req: Request) {
@@ -31,5 +30,6 @@ export async function PUT(req: Request) {
     })
     .where(eq(schema.profile.id, 1));
 
+  await syncEmbedding("profile", 1);
   return Response.json({ ok: true });
 }

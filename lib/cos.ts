@@ -1,6 +1,14 @@
 import COS from "cos-nodejs-sdk-v5";
 
+function requireCosEnv() {
+  const missing = ["COS_SECRET_ID", "COS_SECRET_KEY", "COS_BUCKET", "COS_REGION"].filter(
+    (k) => !process.env[k]
+  );
+  if (missing.length) throw new Error(`Missing COS env: ${missing.join(", ")}`);
+}
+
 function getCosClient() {
+  requireCosEnv();
   return new COS({
     SecretId: process.env.COS_SECRET_ID!,
     SecretKey: process.env.COS_SECRET_KEY!,

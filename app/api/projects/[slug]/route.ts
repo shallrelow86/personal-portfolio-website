@@ -1,5 +1,6 @@
 import { db, schema } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { parseJsonArray } from "@/lib/json";
 
 export async function GET(
   _req: Request,
@@ -18,8 +19,8 @@ export async function GET(
 
   return Response.json({
     ...project,
-    techStack: JSON.parse(project.techStack),
-    screenshots: JSON.parse(project.screenshots),
+    techStack: parseJsonArray(project.techStack),
+    screenshots: parseJsonArray(project.screenshots),
     featured: Boolean(project.featured),
   });
 }
